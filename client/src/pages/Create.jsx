@@ -10,21 +10,33 @@ const Create = () => {
     cover: '',
   });
 
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!book.title || !book.desc || !book.price || !book.cover) {
+      setError('Please fill in all fields.');
+      return;
+    }
+
     try {
       await axios.post('http://localhost:3000/books', book);
       navigate('/');
     } catch (error) {
       console.error(error);
+      setError('Something went wrong while creating the book.');
     }
   };
 
   return (
     <div className="w-full max-w-[500px] bg-white p-8 rounded-xl shadow-md flex flex-col items-center justify-center gap-4 mt-10 mx-auto">
       <h1 className="text-2xl font-semibold mb-2">Create a New Book</h1>
+
+      {error && (
+        <p className="text-red-600 text-sm font-medium">{error}</p>
+      )}
 
       {book.cover && (
         <img
