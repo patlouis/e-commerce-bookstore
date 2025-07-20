@@ -18,7 +18,7 @@ function Books() {
     }, []);
 
     return (
-        <div className="min-h-screen px-10 py-16 flex flex-col items-center text-center bg-[#f9f9f9] font-sans">
+        <div className="min-h-screen px-10 py-16 flex flex-col items-center text-center bg-[#f9f9f9] font-sans rounded-xl">
             <h1 className="text-3xl font-semibold mb-8">Patrick's Bookstore</h1>
 
             <div className="flex flex-wrap gap-5 justify-center mt-6">
@@ -37,12 +37,12 @@ function Books() {
                         <p className="text-base font-medium mt-1 text-green-700">₱{book.price}</p>
 
                         <Link to={`/update/${book.id}`} className="w-full">
-                            <button className="w-full bg-[#e6f0ff] text-[#0047ab] text-sm mt-3 py-2 rounded-md hover:bg-[#cce0ff] transition-colors">
+                            <button className="w-full bg-[#e6f0ff] text-[#0047ab] text-sm mt-3 py-2 rounded-md hover:bg-[#cce0ff] transition-colors cursor-pointer">
                                 Update
                             </button>
                         </Link>
 
-                        <button className="w-full bg-[#ffe5e5] text-[#cc0000] text-sm mt-2 py-2 rounded-md hover:bg-[#ffcccc] transition-colors">
+                        <button className="w-full bg-[#ffe5e5] text-[#cc0000] text-sm mt-2 py-2 rounded-md hover:bg-[#ffcccc] transition-colors cursor-pointer">
                             Delete
                         </button>
                     </div>
