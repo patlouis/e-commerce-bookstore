@@ -32,7 +32,7 @@ app.get('/books', (req, res) => {
 
 //Create a new book
 app.post('/books', (req, res) => {
-    const QUERY = 'INSER INTO books (title, desc, cover, price) VALUES (?)';
+    const QUERY = 'INSERT INTO books (title, desc, cover, price) VALUES (?)';
     const values = [
         req.body.title,
         req.body.desc,
