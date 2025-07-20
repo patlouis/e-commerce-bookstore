@@ -57,7 +57,7 @@ app.delete('/books/:id', (req, res) => {
 
 // Update a book
 app.put('/books/:id', (req, res) => {
-    const QUERY = 'UPDATE books SET title = ?, desc = ?, cover = ?, price = ? WHERE id = ?';
+    const QUERY = 'UPDATE books SET `title` = ?, `desc` = ?, `cover` = ?, `price` = ? WHERE id = ?';
     const booksId = req.params.id;
         const values = [
         req.body.title,
