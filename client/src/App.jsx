@@ -3,8 +3,8 @@ import Books from './pages/Books'
 import Create from './pages/Create'
 import Update from './pages/Update'
 import User from './pages/User'
-import Signup from './pages/Signup'
-import Login from './pages/Login'
+import Signup from './pages/auth/Signup'
+import Login from './pages/auth/Login'
 import './App.css'
 
 function App() {
