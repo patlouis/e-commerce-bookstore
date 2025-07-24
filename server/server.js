@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import booksRoutes from './routes/books.js';
+
+import bookRoutes from './routes/bookRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -14,7 +16,8 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Bookstore API!');
 });
 
-app.use('/books', booksRoutes);
+app.use('/books', bookRoutes);
+app.use('/auth', authRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

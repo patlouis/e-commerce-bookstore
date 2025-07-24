@@ -11,17 +11,14 @@ function Login() {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setCredentials((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post('http://localhost:3000/login', credentials);
+      await axios.post('http://localhost:3000/auth/login', credentials);
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
@@ -64,7 +61,7 @@ function Login() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-800 transition-colors"
+          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-800 transition-colors cursor-pointer"
         >
           Log In
         </button>

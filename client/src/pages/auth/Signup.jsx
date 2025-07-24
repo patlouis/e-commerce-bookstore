@@ -12,17 +12,14 @@ function Signup() {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post('http://localhost:3000/signup', formData);
+      await axios.post('http://localhost:3000/auth/signup', formData);
       navigate('/login');
     } catch (error) {
       console.error('Signup failed:', error);
@@ -78,7 +75,7 @@ function Signup() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-800 transition-colors"
+          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-800 transition-colors cursor-pointer"
         >
           Sign Up
         </button>
