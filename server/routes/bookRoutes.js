@@ -1,45 +1,59 @@
+// /routes/bookRoutes.js
 import express from 'express';
-import db from '../db.js';
+import { connectToDatabase } from '../database.js';
 
 const router = express.Router();
 
-// Get all books
-router.get('/', (req, res) => {
-  db.query('SELECT * FROM books', (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
+router.get('/', async (req, res) => {
+  try {
+    const db = await connectToDatabase();
+    const [books] = await db.query('SELECT * FROM books');
+    res.json(books);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Add book
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { title, desc, cover, price } = req.body;
-  if (!title || !desc || !cover || price == null)
+  if (!title || !desc || !cover || price == null) {
     return res.status(400).json({ error: 'All fields are required' });
+  }
 
-  const query = 'INSERT INTO books (`title`, `desc`, `cover`, `price`) VALUES (?, ?, ?, ?)';
-  db.query(query, [title, desc, cover, price], (err) => {
-    if (err) return res.status(500).json({ error: err.message });
+  try {
+    const db = await connectToDatabase();
+    await db.query(
+      'INSERT INTO books (`title`, `desc`, `cover`, `price`) VALUES (?, ?, ?, ?)',
+      [title, desc, cover, price]
+    );
     res.status(201).json({ message: 'Book created' });
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Delete book
-router.delete('/:id', (req, res) => {
-  db.query('DELETE FROM books WHERE id = ?', [req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: err.message });
+router.delete('/:id', async (req, res) => {
+  try {
+    const db = await connectToDatabase();
+    await db.query('DELETE FROM books WHERE id = ?', [req.params.id]);
     res.json({ message: 'Book deleted' });
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Update book
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   const { title, desc, cover, price } = req.body;
-  const query = 'UPDATE books SET `title`=?, `desc`=?, `cover`=?, `price`=? WHERE id=?';
-  db.query(query, [title, desc, cover, price, req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: err.message });
+  try {
+    const db = await connectToDatabase();
+    await db.query(
+      'UPDATE books SET `title`=?, `desc`=?, `cover`=?, `price`=? WHERE id=?',
+      [title, desc, cover, price, req.params.id]
+    );
     res.json({ message: 'Book updated' });
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

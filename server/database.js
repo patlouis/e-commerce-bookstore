@@ -12,6 +12,7 @@ export const connectToDatabase = async () => {
             password: process.env.DB_PASS,
             database: process.env.DB_NAME,
         });
+        console.log('MySQL connected');
     }
     return connection;
 };
