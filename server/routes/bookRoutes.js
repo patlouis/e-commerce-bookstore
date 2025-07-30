@@ -1,4 +1,3 @@
-// /routes/bookRoutes.js
 import express from 'express';
 import { connectToDatabase } from '../database.js';
 
