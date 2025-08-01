@@ -1,13 +1,20 @@
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function NavBar() {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const [token, setToken] = useState(localStorage.getItem('token'));
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    setToken(null); // update state
     navigate('/login');
   };
+
+    useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+  }, []); // run once on mount
 
   return (
     <nav className="bg-blue-900 text-white px-6 py-3 flex justify-between items-center shadow-sm">
