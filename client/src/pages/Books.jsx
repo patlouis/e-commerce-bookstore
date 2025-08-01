@@ -45,7 +45,7 @@ function Books() {
     <>
       <NavBar />
       <div className="min-h-screen w-full px-10 py-16 flex flex-col items-center text-center bg-[#f9f9f9] font-sans">
-        <h1 className="text-3xl font-semibold mb-4">Patrick's Bookstore</h1>
+        <h1 className="text-3xl font-semibold mb-4">Fully Booked</h1>
 
         {/* Add book button only if authenticated */}
         {token && (

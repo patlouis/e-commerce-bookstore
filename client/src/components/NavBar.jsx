@@ -17,7 +17,7 @@ function NavBar() {
   }, []); // run once on mount
 
   return (
-    <nav className="bg-blue-900 text-white px-6 py-3 flex justify-between items-center shadow-sm">
+    <nav className="bg-orange-600 text-white px-6 py-3 flex justify-between items-center shadow-sm">
       {/* Left (optional logo or placeholder) */}
       <div className="w-1/3" />
 
