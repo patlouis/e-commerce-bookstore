@@ -1,0 +1,53 @@
+import { Link, useNavigate } from 'react-router-dom';
+
+function NavBar() {
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
+  return (
+    <nav className="bg-blue-900 text-white px-6 py-3 flex justify-between items-center shadow-sm">
+      {/* Left (optional logo or placeholder) */}
+      <div className="w-1/3" />
+
+      {/* Center nav links */}
+      <div className="flex space-x-10 text-sm items-center justify-center w-1/3">
+        <Link to="/user" className="hover:underline">
+          Home
+        </Link>
+        {token ? (<Link to="/create" className="hover:underline">
+          Add Book
+        </Link>
+        ) : (
+          <Link to="/" className="hover:underline">
+            Books
+          </Link>
+        )}
+      </div>
+
+      {/* Right auth controls */}
+      <div className="flex space-x-10 text-sm items-center justify-end w-1/3">
+        {token ? (
+          <button onClick={handleLogout} className="hover:underline">
+            Logout
+          </button>
+        ) : (
+          <>
+            <Link to="/login" className="hover:underline">
+              Login
+            </Link>
+            <Link to="/signup" className="hover:underline">
+              Sign Up
+            </Link>
+          </>
+        )}
+      </div>
+    </nav>
+  );
+}
+
+export default NavBar;
