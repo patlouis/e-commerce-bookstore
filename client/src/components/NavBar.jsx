@@ -39,9 +39,14 @@ function NavBar() {
       {/* Right auth controls */}
       <div className="flex space-x-10 text-sm items-center justify-end w-1/3">
         {token ? (
-          <button onClick={handleLogout} className="hover:underline">
+          <>
+          <Link to="/user" className="hover:underline">
+            Profile
+          </Link>
+          <button onClick={handleLogout} className="hover:underline cursor-pointer">
             Logout
           </button>
+          </>
         ) : (
           <>
             <Link to="/login" className="hover:underline">
