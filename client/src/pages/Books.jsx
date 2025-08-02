@@ -66,6 +66,7 @@ function Books() {
                 className="w-[180px] h-[270px] object-cover rounded-md bg-gray-300"
               />
               <h2 className="text-lg font-semibold mt-4">{book.title}</h2>
+              <p className="text-sm font-small mt-1">{book.author}</p>
               <p className="text-base font-medium mt-1 text-green-700">₱{book.price}</p>
 
               {/* Show update/delete buttons only if logged in */}

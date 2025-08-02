@@ -14,16 +14,16 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { title, desc, cover, price } = req.body;
-  if (!title || !desc || !cover || price == null) {
+  const { title, author, desc, cover, price } = req.body;
+  if (!title || !author || !desc || !cover || price == null) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
     const db = await connectToDatabase();
     await db.query(
-      'INSERT INTO books (`title`, `desc`, `cover`, `price`) VALUES (?, ?, ?, ?)',
-      [title, desc, cover, price]
+      'INSERT INTO books (`title`, `author`, `desc`, `cover`, `price`) VALUES (?, ?, ?, ?, ?)',
+      [title, author, desc, cover, price]
     );
     res.status(201).json({ message: 'Book created' });
   } catch (err) {
@@ -42,12 +42,12 @@ router.delete('/:id', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-  const { title, desc, cover, price } = req.body;
+  const { title, author, desc, cover, price } = req.body;
   try {
     const db = await connectToDatabase();
     await db.query(
-      'UPDATE books SET `title`=?, `desc`=?, `cover`=?, `price`=? WHERE id=?',
-      [title, desc, cover, price, req.params.id]
+      'UPDATE books SET `title`=?, `author`=?, `desc`=?, `cover`=?, `price`=? WHERE id=?',
+      [title, author, desc, cover, price, req.params.id]
     );
     res.json({ message: 'Book updated' });
   } catch (err) {

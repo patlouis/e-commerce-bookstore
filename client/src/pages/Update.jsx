@@ -64,6 +64,14 @@ const Update = () => {
       />
       <input
         type="text"
+        name="author"
+        value={book.author}
+        placeholder="Author"
+        onChange={handleChange}
+        className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+      />
+      <input
+        type="text"
         name="desc"
         value={book.desc}
         placeholder="Description"
