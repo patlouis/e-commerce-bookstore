@@ -54,11 +54,11 @@ function Books() {
           </button>
         )}
 
-        <div className="flex flex-wrap gap-5 justify-center mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 mt-4">
           {books.map((book) => (
             <div
               key={book.id}
-              className="w-[220px] bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center shadow-sm hover:-translate-y-1 transition-transform"
+              className="w-[210px] bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center shadow-sm hover:-translate-y-1 transition-transform"
             >
               <img
                 src={book.cover}
@@ -66,7 +66,6 @@ function Books() {
                 className="w-[180px] h-[270px] object-cover rounded-md bg-gray-300"
               />
               <h2 className="text-lg font-semibold mt-4">{book.title}</h2>
-              <p className="text-sm text-gray-600 mt-1">{book.desc}</p>
               <p className="text-base font-medium mt-1 text-green-700">₱{book.price}</p>
 
               {/* Show update/delete buttons only if logged in */}

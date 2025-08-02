@@ -31,7 +31,7 @@ function NavBar() {
         </Link>
         ) : (
           <Link to="/" className="hover:underline">
-            Books
+            Categories
           </Link>
         )}
       </div>
