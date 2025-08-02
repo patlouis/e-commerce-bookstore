@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { Eye, EyeOff } from 'lucide-react';
 
 function Signup() {
   const [values, setValues] = useState({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
 
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,13 +23,24 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!values.username || !values.email || !values.password) {
+    const { username, email, password, confirmPassword } = values;
+
+    if (!username || !email || !password || !confirmPassword) {
       setError('All fields are required.');
       return;
     }
 
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     try {
-      await axios.post('http://localhost:3000/auth/signup', values);
+      await axios.post('http://localhost:3000/auth/signup', {
+        username,
+        email,
+        password
+      });
       navigate('/login');
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed.');
@@ -68,16 +83,44 @@ function Signup() {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               name="password"
               placeholder="Enter password"
               value={values.password}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full mt-1 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-900 cursor-pointer"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              name="confirmPassword"
+              placeholder="Confirm password"
+              value={values.confirmPassword}
+              onChange={handleChange}
+              className="w-full mt-1 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-900 cursor-pointer"
+              tabIndex={-1}
+            >
+              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
 
           <button
