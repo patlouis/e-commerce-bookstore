@@ -5,7 +5,6 @@ import Update from './pages/Update'
 import User from './pages/User'
 import Signup from './pages/auth/Signup'
 import Login from './pages/auth/Login'
-import './App.css'
 
 function App() {
 

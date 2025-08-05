@@ -5,6 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 const Create = () => {
   const [book, setBook] = useState({
     title: '',
+    author: '',
     desc: '',
     price: '',
     cover: '',
@@ -16,7 +17,7 @@ const Create = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!book.title || !book.desc || !book.price || !book.cover) {
+    if (!book.title || !book.author || !book.desc || !book.price || !book.cover) {
       setError('Please fill in all fields.');
       return;
     }
@@ -52,6 +53,13 @@ const Create = () => {
         placeholder="Title"
         className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
         onChange={(e) => setBook({ ...book, title: e.target.value })}
+      />
+      <input
+        type="text"
+        name="author"
+        placeholder="Author"
+        className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+        onChange={(e) => setBook({ ...book, author: e.target.value })}
       />
       <input
         type="text"
