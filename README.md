@@ -1,6 +1,9 @@
 # Fully Booked Clone
 
-A full-stack e-commerce bookstore web application inspired by Fully Booked. Built with modern technologies to simulate real-world bookstore functionality, including user-friendly browsing, secure order processing, and admin-level management of books, users, and orders.
+A full-stack e-commerce bookstore web application inspired by Fullya Booked. Built with modern technologies to simulate real-world bookstore functionality, including user-friendly browsing, secure order processing, and admin-level management of books, users, and orders.
+
+### Tech Stack
+- Javascript, Node, Express, React, TailwindCSS, Vite
 
 ### Features
 
