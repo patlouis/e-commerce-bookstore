@@ -5,6 +5,11 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
+const isStrongPassword = (password) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+  return regex.test(password);
+};
+
 router.post('/signup', async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -12,6 +17,12 @@ router.post('/signup', async (req, res) => {
     if (!username || !email || !password) {
         return res.status(400).json({ message: 'All fields are required.' });
     }      
+
+    if (!isStrongPassword(password)) {
+        return res.status(400).json({
+            message: 'Password must be minimum of 8 characters (include uppercase, lowercase, number, and special character).'
+        });
+    }
 
     try {
         const db = await connectToDatabase();

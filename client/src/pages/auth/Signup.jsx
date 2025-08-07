@@ -20,6 +20,11 @@ function Signup() {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
+  const validatePassword = (password) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+  return regex.test(password);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -32,6 +37,11 @@ function Signup() {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setError('Password must be minimum of 8 characters (include uppercase, lowercase, number, and special character).');
       return;
     }
 
