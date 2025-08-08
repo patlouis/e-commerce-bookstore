@@ -76,7 +76,7 @@ function Signup() {
               placeholder="Enter username"
               value={values.username}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
               required
             />
           </div>
@@ -88,7 +88,7 @@ function Signup() {
               placeholder="Enter email"
               value={values.email}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
               required
             />
           </div>
@@ -100,7 +100,7 @@ function Signup() {
               placeholder="Enter password"
               value={values.password}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full mt-1 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
               required
             />
             <button
@@ -120,7 +120,7 @@ function Signup() {
               placeholder="Confirm password"
               value={values.confirmPassword}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full mt-1 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
               required
             />
             <button
@@ -135,7 +135,7 @@ function Signup() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold cursor-pointer"
+            className="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition duration-200 font-semibold cursor-pointer"
           >
             Sign Up
           </button>
@@ -143,7 +143,7 @@ function Signup() {
 
         <p className="text-sm text-gray-600 text-center mt-6">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline">
+          <Link to="/login" className="text-orange-600 hover:underline">
             Log in
           </Link>
         </p>

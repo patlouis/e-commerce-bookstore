@@ -49,7 +49,7 @@ function Books() {
 
         {/* Add book button only if authenticated */}
         {token && (
-          <button className="bg-blue-600 text-white px-5 py-2 rounded-md text-sm hover:bg-blue-800 transition-colors mb-6 cursor-pointer">
+          <button className="bg-orange-600 text-white px-5 py-2 rounded-md text-sm hover:bg-orange-800 transition-colors mb-6 cursor-pointer">
             <Link to="/create">+ Add New Book</Link>
           </button>
         )}
