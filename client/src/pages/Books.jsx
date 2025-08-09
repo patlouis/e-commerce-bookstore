@@ -30,10 +30,33 @@ function Books() {
     fetchBooks();
   }, []);
 
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/categories");
+        setCategories(res.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   // Filter books by selected category or show all
-  const filteredBooks = selectedCategory
-    ? books.filter((book) => book.category_id === selectedCategory)
-    : books;
+  const filteredBooks =
+    selectedCategory === null
+      ? books
+      : books.filter(
+          (book) => Number(book.category_id) === Number(selectedCategory)
+        );
+
+  // Get selected category name or default text
+  const selectedCategoryName =
+    selectedCategory === null
+      ? "Our Collection"
+      : categories.find((cat) => Number(cat.id) === Number(selectedCategory))
+          ?.name || "";
 
   const handleDelete = async (id) => {
     if (!token) return;
@@ -58,6 +81,11 @@ function Books() {
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
+
+        {/* Selected Category Title */}
+        <h1 className="text-3xl font-bold mb-6 max-w-[1300px] w-full">
+          {selectedCategoryName}
+        </h1>
 
         {/* Books Grid */}
         <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4 items-stretch">

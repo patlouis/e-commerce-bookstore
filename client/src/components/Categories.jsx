@@ -1,4 +1,3 @@
-// Categories.jsx (modified)
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -28,9 +27,9 @@ export default function Categories({ selectedCategory, onSelectCategory }) {
       {categories.map((cat) => (
         <div
           key={cat.id}
-          onClick={() => onSelectCategory(cat.id)}
+          onClick={() => onSelectCategory(Number(cat.id))} // ensure Number
           className={`px-4 py-2 rounded-full text-sm font-medium shadow-sm cursor-pointer transition-colors ${
-            selectedCategory === cat.id
+            Number(selectedCategory) === Number(cat.id)
               ? "bg-orange-600 text-white"
               : "bg-orange-200 text-orange-900 hover:bg-orange-300"
           }`}
