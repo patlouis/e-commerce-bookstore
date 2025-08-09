@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import NavBar from "../components/NavBar";
+import Categories from "../components/Categories";
 
 function Books() {
   const [books, setBooks] = useState([]);
@@ -29,19 +30,6 @@ function Books() {
     fetchBooks();
   }, []);
 
-  // Fetch categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await axios.get("http://localhost:3000/categories");
-        setCategories(res.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
-  }, []);
-
   // Filter books by selected category or show all
   const filteredBooks = selectedCategory
     ? books.filter((book) => book.category_id === selectedCategory)
@@ -66,34 +54,10 @@ function Books() {
     <>
       <NavBar />
       <div className="min-h-screen w-full px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
-        {/* Categories Blobs */}
-        <div className="flex flex-wrap gap-3 mb-8 max-w-[1300px] w-full">
-          {/* "All" button */}
-          <div
-            onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-full text-sm font-medium shadow-sm cursor-pointer transition-colors ${
-              selectedCategory === null
-                ? "bg-orange-600 text-white"
-                : "bg-orange-200 text-orange-900 hover:bg-orange-300"
-            }`}
-          >
-            All
-          </div>
-
-          {categories.map((cat) => (
-            <div
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium shadow-sm cursor-pointer transition-colors ${
-                selectedCategory === cat.id
-                  ? "bg-orange-600 text-white"
-                  : "bg-orange-200 text-orange-900 hover:bg-orange-300"
-              }`}
-            >
-              {cat.name}
-            </div>
-          ))}
-        </div>
+        <Categories
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
 
         {/* Books Grid */}
         <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4 items-stretch">
