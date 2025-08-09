@@ -5,12 +5,19 @@ import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import Categories from "../components/Categories";
 
+const API_BASE_URL = "http://localhost:3000";
 
 function Books() {
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [token, setToken] = useState(null);
+
+  const [loadingBooks, setLoadingBooks] = useState(false);
+  const [errorBooks, setErrorBooks] = useState(null);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [errorCategories, setErrorCategories] = useState(null);
+
   const navigate = useNavigate();
 
   // Get token once on mount
@@ -23,10 +30,15 @@ function Books() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/books");
+        setLoadingBooks(true);
+        setErrorBooks(null);
+        const res = await axios.get(`${API_BASE_URL}/books`);
         setBooks(res.data);
       } catch (error) {
+        setErrorBooks("Failed to load books. Please try again later.");
         console.error("Error fetching books:", error);
+      } finally {
+        setLoadingBooks(false);
       }
     };
     fetchBooks();
@@ -36,10 +48,15 @@ function Books() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/categories");
+        setLoadingCategories(true);
+        setErrorCategories(null);
+        const res = await axios.get(`${API_BASE_URL}/categories`);
         setCategories(res.data);
       } catch (error) {
+        setErrorCategories("Failed to load categories.");
         console.error("Error fetching categories:", error);
+      } finally {
+        setLoadingCategories(false);
       }
     };
     fetchCategories();
@@ -63,80 +80,114 @@ function Books() {
   const handleDelete = async (id) => {
     if (!token) return;
 
+    const confirmed = window.confirm("Are you sure you want to delete this book?");
+    if (!confirmed) return;
+
     try {
-      await axios.delete(`http://localhost:3000/books/${id}`, {
+      await axios.delete(`${API_BASE_URL}/books/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setBooks(books.filter((book) => book.id !== id));
     } catch (error) {
+      alert("Failed to delete book. Please try again.");
       console.error("Delete failed:", error);
     }
+  };
+
+  const handleAddToCart = () => {
+    alert("Please log in to add books to your cart.");
+    navigate("/login");
   };
 
   return (
     <>
       <NavBar />
-      <div className="min-h-screen w-full px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
-        <Categories
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
-
+      <main className="min-h-screen w-full px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
         {/* Selected Category Title */}
-        <h1 className="text-3xl font-bold mb-6 max-w-[1300px] w-full">
+        <h1
+          className="text-3xl font-bold mb-6 max-w-[1300px] w-full"
+          tabIndex={0} // keyboard focus for accessibility
+        >
           {selectedCategoryName}
         </h1>
 
+        {/* Categories Component */}
+        {loadingCategories ? (
+          <p>Loading categories...</p>
+        ) : errorCategories ? (
+          <p className="text-red-600">{errorCategories}</p>
+        ) : (
+          <Categories
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        )}
+
         {/* Books Grid */}
-        <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4 items-stretch">
-          {filteredBooks.map((book) => (
-            <div
-              key={book.id}
-              className="w-[210px] h-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform"
-            >
-              {/* Image centered horizontally */}
-              <img
-                src={book.cover}
-                alt={book.title}
-                className="w-[180px] h-[270px] object-cover rounded-md bg-gray-300 self-center"
-              />
+        {loadingBooks ? (
+          <p>Loading books...</p>
+        ) : errorBooks ? (
+          <p className="text-red-600">{errorBooks}</p>
+        ) : filteredBooks.length === 0 ? (
+          <p>No books found in this category.</p>
+        ) : (
+          <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4 items-stretch">
+            {filteredBooks.map((book) => (
+              <article
+                key={book.id}
+                className="w-[210px] h-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform"
+                tabIndex={0} // make cards focusable
+                aria-label={`Book: ${book.title} by ${book.author}, price ₱${book.price}`}
+              >
+                {/* Image centered horizontally */}
+                <img
+                  src={book.cover}
+                  alt={`Cover of ${book.title}`}
+                  className="w-[180px] h-[270px] object-cover rounded-md bg-gray-300 self-center"
+                />
 
-              {/* Text left-aligned */}
-              <h2 className="text-base font-semibold mt-4">{book.title}</h2>
-              <p className="text-xs mt-1 text-gray-600">{book.author}</p>
-              <p className="text-base font-medium mt-1.5">₱{book.price}</p>
+                {/* Text left-aligned */}
+                <h2 className="text-base font-semibold mt-4">{book.title}</h2>
+                <p className="text-xs mt-1 text-gray-600">{book.author}</p>
+                <p className="text-base font-medium mt-1.5">₱{book.price}</p>
 
-              {/* Push price + buttons to bottom */}
-              <div className="flex flex-col mt-auto w-full">
-                {token ? (
-                  <>
-                    <Link to={`/update/${book.id}`} className="w-full">
-                      <button className="w-full bg-[#e6f0ff] text-[#0047ab] text-sm mt-3 py-2 rounded-md hover:bg-[#cce0ff] transition-colors cursor-pointer">
-                        Update
+                {/* Push price + buttons to bottom */}
+                <div className="flex flex-col mt-auto w-full">
+                  {token ? (
+                    <>
+                      <Link to={`/update/${book.id}`} className="w-full">
+                        <button
+                          className="w-full bg-[#e6f0ff] text-[#0047ab] text-sm mt-3 py-2 rounded-md hover:bg-[#cce0ff] transition-colors cursor-pointer"
+                          aria-label={`Update book ${book.title}`}
+                        >
+                          Update
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(book.id)}
+                        className="w-full bg-[#ffe5e5] text-[#cc0000] text-sm mt-2 py-2 rounded-md hover:bg-[#ffcccc] transition-colors cursor-pointer"
+                        aria-label={`Delete book ${book.title}`}
+                      >
+                        Delete
                       </button>
-                    </Link>
+                    </>
+                  ) : (
                     <button
-                      onClick={() => handleDelete(book.id)}
-                      className="w-full bg-[#ffe5e5] text-[#cc0000] text-sm mt-2 py-2 rounded-md hover:bg-[#ffcccc] transition-colors cursor-pointer"
+                      onClick={handleAddToCart}
+                      className="w-full bg-orange-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-orange-800 transition-colors cursor-pointer"
+                      aria-label="Add book to cart (login required)"
                     >
-                      Delete
+                      Add to Cart
                     </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => console.log(`Add ${book.title} to cart`)}
-                    className="w-full bg-orange-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-orange-800 transition-colors cursor-pointer"
-                  >
-                    Add to Cart
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </main>
       <Footer />
     </>
   );

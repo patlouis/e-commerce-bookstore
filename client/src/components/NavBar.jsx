@@ -29,16 +29,16 @@ function NavBar() {
 
       {/* Navbar */}
       <nav className="bg-orange-600 text-white px-6 py-3 flex justify-between items-center shadow-sm fixed top-0 w-full z-50">
-        {/* Hamburger button, visible only on small screens */}
+        {/* Hamburger button, visible on all screens */}
         <button
           onClick={toggleSidebar}
-          className="mr-4 md:hidden flex flex-col justify-center items-center gap-1 cursor-pointer"
+          className="mr-4 flex flex-col justify-center items-center gap-1 cursor-pointer"
           aria-label="Toggle sidebar menu"
           style={{ width: 28, height: 24 }}
         >
-          <span className="block w-6 h-0.5 bg-white rounded"></span>
-          <span className="block w-6 h-0.5 bg-white rounded"></span>
-          <span className="block w-6 h-0.5 bg-white rounded"></span>
+          <span className="block w-5 h-0.5 bg-white rounded"></span>
+          <span className="block w-5 h-0.5 bg-white rounded"></span>
+          <span className="block w-5 h-0.5 bg-white rounded"></span>
         </button>
 
         {/* Left - logo/title */}
