@@ -7,7 +7,7 @@ function NavBar() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setToken(null); // update state
+    setToken(null);
     navigate('/login');
   };
 
@@ -28,7 +28,7 @@ function NavBar() {
       {/* Center nav links */}
       <div className="flex space-x-10 text-sm items-center justify-center w-1/3">
         <Link to="/user" className="hover:underline">
-          Home
+          Categories
         </Link>
         {token ? (
           <Link to="/create" className="hover:underline">

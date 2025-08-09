@@ -5,14 +5,17 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 const Update = () => {
   const [book, setBook] = useState({
     title: '',
+    author: '',
     desc: '',
     price: '',
     cover: '',
+    category_id: null,
   });
-
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // Fetch the book by id
   useEffect(() => {
     const fetchBook = async () => {
       try {
@@ -28,10 +31,29 @@ const Update = () => {
     fetchBook();
   }, [id]);
 
+  // Fetch categories for dropdown
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/categories');
+        setCategories(res.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Handle input change for all fields including category_id
   const handleChange = (e) => {
-    setBook({ ...book, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setBook((prev) => ({
+      ...prev,
+      [name]: name === 'category_id' ? parseInt(value) : value,
+    }));
   };
 
+  // Submit update
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -65,7 +87,7 @@ const Update = () => {
       <input
         type="text"
         name="author"
-        value={book.author}
+        value={book.author || ''}
         placeholder="Author"
         onChange={handleChange}
         className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
@@ -95,6 +117,23 @@ const Update = () => {
         className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
       />
 
+      {/* Category Dropdown */}
+      <select
+        name="category_id"
+        value={book.category_id || ''}
+        onChange={handleChange}
+        className="w-full max-w-[400px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+      >
+        <option value="" disabled>
+          Select Category
+        </option>
+        {categories.map((cat) => (
+          <option key={cat.id} value={cat.id}>
+            {cat.name}
+          </option>
+        ))}
+      </select>
+
       <button
         onClick={handleSubmit}
         className="bg-blue-600 text-white px-5 py-2 mt-2 rounded-lg text-sm hover:bg-blue-800 transition-colors cursor-pointer"
@@ -102,10 +141,7 @@ const Update = () => {
         Update
       </button>
 
-      <Link
-        to="/"
-        className="text-sm text-blue-600 hover:underline mt-2"
-      >
+      <Link to="/" className="text-sm text-blue-600 hover:underline mt-2">
         ← Back to Books
       </Link>
     </div>

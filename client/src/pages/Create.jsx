@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -9,16 +9,38 @@ const Create = () => {
     desc: '',
     price: '',
     cover: '',
+    category_id: '', // added category_id
   });
 
+  const [categories, setCategories] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/categories');
+        setCategories(res.data);
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!book.title || !book.author || !book.desc || !book.price || !book.cover) {
-      setError('Please fill in all fields.');
+    if (
+      !book.title ||
+      !book.author ||
+      !book.desc ||
+      !book.price ||
+      !book.cover ||
+      !book.category_id
+    ) {
+      setError('Please fill in all fields including category.');
       return;
     }
 
@@ -35,9 +57,7 @@ const Create = () => {
     <div className="w-full max-w-[500px] bg-white p-8 rounded-xl shadow-md flex flex-col items-center justify-center gap-4 mt-10 mx-auto">
       <h1 className="text-2xl font-semibold mb-2">Create a New Book</h1>
 
-      {error && (
-        <p className="text-red-600 text-sm font-medium">{error}</p>
-      )}
+      {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
 
       {book.cover && (
         <img
@@ -83,6 +103,21 @@ const Create = () => {
         onChange={(e) => setBook({ ...book, cover: e.target.value })}
       />
 
+      {/* Category dropdown */}
+      <select
+        name="category_id"
+        value={book.category_id}
+        onChange={(e) => setBook({ ...book, category_id: e.target.value })}
+        className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 cursor-pointer"
+      >
+        <option value="">Select Category</option>
+        {categories.map((cat) => (
+          <option key={cat.id} value={cat.id}>
+            {cat.name}
+          </option>
+        ))}
+      </select>
+
       <button
         onClick={handleSubmit}
         className="bg-blue-600 text-white px-5 py-2 mt-2 rounded-lg text-sm hover:bg-blue-800 transition-colors cursor-pointer"
@@ -90,10 +125,7 @@ const Create = () => {
         Create
       </button>
 
-      <Link
-        to="/"
-        className="text-sm text-blue-600 hover:underline mt-2"
-      >
+      <Link to="/" className="text-sm text-blue-600 hover:underline mt-2">
         ← Back to Books
       </Link>
     </div>

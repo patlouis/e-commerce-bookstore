@@ -4,6 +4,7 @@ import Create from './pages/Create'
 import Update from './pages/Update'
 import Signup from './pages/auth/Signup'
 import Login from './pages/auth/Login'
+import Categories from './pages/Categories'
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/update/:id" element={<Update/>} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/login" element={<Login/>} />
+        <Route path="/categories" element={<Categories/>} />"
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>
