@@ -44,7 +44,7 @@ function Books() {
   return (
     <>
       <NavBar />
-      <div className="min-h-screen w-full px-10 py-16 flex flex-col items-center text-center bg-[#f9f9f9] font-sans">
+      <div className="min-h-screen w-full px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
         <h1 className="text-3xl font-semibold mb-4">Fully Booked</h1>
 
         {/* Add book button only if authenticated */}
@@ -54,23 +54,27 @@ function Books() {
           </button>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 mt-4">
-          {books.map((book) => (
-            <div
-              key={book.id}
-              className="w-[210px] bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center shadow-sm hover:-translate-y-1 transition-transform"
-            >
-              <img
-                src={book.cover}
-                alt={book.title}
-                className="w-[180px] h-[270px] object-cover rounded-md bg-gray-300"
-              />
-              <h2 className="text-lg font-semibold mt-4">{book.title}</h2>
-              <p className="text-sm font-small mt-1">{book.author}</p>
-              <p className="text-base font-medium mt-1 text-green-700">₱{book.price}</p>
+       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 mt-4 items-stretch">
+        {books.map((book) => (
+          <div
+            key={book.id}
+            className="w-[210px] h-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform"
+          >
+            {/* Image centered horizontally */}
+            <img
+              src={book.cover}
+              alt={book.title}
+              className="w-[180px] h-[270px] object-cover rounded-md bg-gray-300 self-center"
+            />
 
-              {/* Show update/delete buttons only if logged in */}
-              {token && (
+            {/* Text left-aligned */}
+            <h2 className="text-base font-semibold mt-4">{book.title}</h2>
+            <p className="text-xs mt-1 text-gray-600">{book.author}</p>
+            <p className="text-base font-medium mt-1.5">₱{book.price}</p>
+
+            {/* Push price + buttons to bottom */}
+            <div className="flex flex-col mt-auto w-full">
+              {token ? (
                 <>
                   <Link to={`/update/${book.id}`} className="w-full">
                     <button className="w-full bg-[#e6f0ff] text-[#0047ab] text-sm mt-3 py-2 rounded-md hover:bg-[#cce0ff] transition-colors cursor-pointer">
@@ -84,12 +88,20 @@ function Books() {
                     Delete
                   </button>
                 </>
+              ) : (
+                <button
+                  onClick={() => console.log(`Add ${book.title} to cart`)}
+                  className="w-full bg-orange-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-orange-800 transition-colors cursor-pointer"
+                >
+                  Add to Cart
+                </button>
               )}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-    </>
+    </div>
+  </>
   );
 }
 
