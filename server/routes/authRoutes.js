@@ -27,10 +27,10 @@ router.post('/signup', async (req, res) => {
     try {
         const db = await connectToDatabase();
         // Check if email is already registered
-        const [existingUser] = await db.query('SELECT * FROM users WHERE email = ?', [email]
+        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]
         );
 
-        if (existingUser.length > 0) {
+        if (rows.length > 0) {
         return res.status(409).json({ message: 'Email already exists.' });
         }
 
@@ -51,15 +51,15 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
         const db = await connectToDatabase();
-        const [noExisting] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
-        if(noExisting.length === 0) {
+        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        if(rows.length === 0) {
             return res.status(401).json({ message: 'User does not exist.' });
         }
-        const isMatch = await bcrypt.compare(password, noExisting[0].password);
+        const isMatch = await bcrypt.compare(password, rows[0].password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Wrong password.' });
         }
-        const token = jwt.sign({ id: noExisting[0].id }, process.env.JWT_SECRET, { expiresIn: '3h' });
+        const token = jwt.sign({ id: rows[0].id }, process.env.JWT_SECRET, { expiresIn: '3h' });
         return res.status(200).json({ token: token });
     } catch(error) {
         return res.status(500).json({ message: 'Internal server error.' });
