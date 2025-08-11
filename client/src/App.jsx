@@ -4,6 +4,7 @@ import Create from './pages/Create'
 import Update from './pages/Update'
 import Signup from './pages/auth/Signup'
 import Login from './pages/auth/Login'
+import UserProfile from './pages/UserProfile'
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/update/:id" element={<Update/>} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/login" element={<Login/>} />
+        <Route path="/user" element={<UserProfile/>} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>

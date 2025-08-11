@@ -80,7 +80,7 @@ function NavBar() {
               <Link to="/user" className="hover:underline">
                 Profile
               </Link>
-              <button onClick={handleLogout} className="hover:underline">
+              <button onClick={handleLogout} className="hover:underline cursor-pointer">
                 Logout
               </button>
             </>

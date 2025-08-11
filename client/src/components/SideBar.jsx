@@ -5,7 +5,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     <>
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full bg-orange-600 text-white w-64 p-6 space-y-6
+        className={`fixed top-0 left-0 h-full bg-orange-800 text-white w-64 p-6 space-y-6
           transform transition-transform duration-300 z-40 shadow-lg rounded-tr-xl rounded-br-xl
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
         style={{ backdropFilter: 'saturate(180%) blur(12px)' }}
@@ -18,8 +18,8 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
           &times;
         </button>
 
-        <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
-        <nav className="flex flex-col space-y-4 text-lg font-semibold">
+        <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
+        <nav className="flex flex-col space-y-4 text-base font-semibold">
           <Link to="/manage/books" onClick={toggleSidebar} className="hover:text-orange-300">
             Manage Books
           </Link>

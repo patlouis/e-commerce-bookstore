@@ -97,4 +97,24 @@ router.get('/home', verifyToken, async (req, res) => {
     }
 });
 
+router.get('/profile', verifyToken, async (req, res) => {
+  try {
+    const db = await connectToDatabase();
+    const [rows] = await db.query(
+      'SELECT id, username, email, created_at FROM users WHERE id = ?',
+      [req.userId] // ✅ use userId from verifyToken
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 export default router;
