@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
@@ -19,6 +19,9 @@ function Books() {
   const [errorCategories, setErrorCategories] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const search = queryParams.get("search") || "";
 
   // Get token once on mount
   useEffect(() => {
@@ -26,13 +29,15 @@ function Books() {
     setToken(storedToken);
   }, []);
 
-  // Fetch books
+  // Fetch books (with search)
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         setLoadingBooks(true);
         setErrorBooks(null);
-        const res = await axios.get(`${API_BASE_URL}/books`);
+        const res = await axios.get(`${API_BASE_URL}/books`, {
+          params: { search },
+        });
         setBooks(res.data);
       } catch (error) {
         setErrorBooks("Failed to load books. Please try again later.");
@@ -42,7 +47,7 @@ function Books() {
       }
     };
     fetchBooks();
-  }, []);
+  }, [search]);
 
   // Fetch categories
   useEffect(() => {
@@ -62,7 +67,7 @@ function Books() {
     fetchCategories();
   }, []);
 
-  // Filter books by selected category or show all
+  // Filter books by selected category
   const filteredBooks =
     selectedCategory === null
       ? books
@@ -70,7 +75,6 @@ function Books() {
           (book) => Number(book.category_id) === Number(selectedCategory)
         );
 
-  // Get selected category name or default text
   const selectedCategoryName =
     selectedCategory === null
       ? "Our Collection"
@@ -105,25 +109,6 @@ function Books() {
     <>
       <NavBar />
       <main className="min-h-screen w-full px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
-        {/* Selected Category Title */}
-        <h1
-          className="text-3xl font-bold mb-6 max-w-[1300px] w-full"
-          tabIndex={0} // keyboard focus for accessibility
-        >
-          {selectedCategoryName}
-        </h1>
-
-        {/* Categories Component */}
-        {loadingCategories ? (
-          <p>Loading categories...</p>
-        ) : errorCategories ? (
-          <p className="text-red-600">{errorCategories}</p>
-        ) : (
-          <Categories
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-          />
-        )}
 
         {/* Books Grid */}
         {loadingBooks ? (
@@ -131,36 +116,31 @@ function Books() {
         ) : errorBooks ? (
           <p className="text-red-600">{errorBooks}</p>
         ) : filteredBooks.length === 0 ? (
-          <p>No books found in this category.</p>
+          <p>No books found{search ? ` for "${search}"` : ""} in this category.</p>
         ) : (
           <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4 items-stretch">
             {filteredBooks.map((book) => (
               <article
                 key={book.id}
                 className="w-[210px] h-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform"
-                tabIndex={0} // make cards focusable
+                tabIndex={0}
                 aria-label={`Book: ${book.title} by ${book.author}, price ₱${book.price}`}
               >
-                {/* Image centered horizontally */}
                 <img
                   src={book.cover}
                   alt={`Cover of ${book.title}`}
                   className="w-[180px] h-[270px] object-cover rounded-md bg-gray-300 self-center"
                 />
-
-                {/* Text left-aligned */}
                 <h2 className="text-base font-semibold mt-4">{book.title}</h2>
                 <p className="text-xs mt-1 text-gray-600">{book.author}</p>
                 <p className="text-base font-medium mt-1.5">₱{book.price}</p>
 
-                {/* Push price + buttons to bottom */}
                 <div className="flex flex-col mt-auto w-full">
                   {token ? (
                     <>
                       <Link to={`/update/${book.id}`} className="w-full">
                         <button
                           className="w-full bg-[#e6f0ff] text-[#0047ab] text-sm mt-3 py-2 rounded-md hover:bg-[#cce0ff] transition-colors cursor-pointer"
-                          aria-label={`Update book ${book.title}`}
                         >
                           Update
                         </button>
@@ -168,7 +148,6 @@ function Books() {
                       <button
                         onClick={() => handleDelete(book.id)}
                         className="w-full bg-[#ffe5e5] text-[#cc0000] text-sm mt-2 py-2 rounded-md hover:bg-[#ffcccc] transition-colors cursor-pointer"
-                        aria-label={`Delete book ${book.title}`}
                       >
                         Delete
                       </button>
@@ -177,7 +156,6 @@ function Books() {
                     <button
                       onClick={handleAddToCart}
                       className="w-full bg-orange-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-orange-800 transition-colors cursor-pointer"
-                      aria-label="Add book to cart (login required)"
                     >
                       Add to Cart
                     </button>

@@ -4,9 +4,14 @@ import { connectToDatabase } from '../database.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
+  const search = req.query.search?.trim();
   try {
     const db = await connectToDatabase();
-    const [books] = await db.query('SELECT * FROM books');
+    const sql = search
+      ? `SELECT * FROM books WHERE title LIKE ? OR author LIKE ?`
+      : `SELECT * FROM books`;
+    const params = search ? [`%${search}%`, `%${search}%`] : [];
+    const [books] = await db.query(sql, params);
     res.json(books);
   } catch (err) {
     res.status(500).json({ error: err.message });
