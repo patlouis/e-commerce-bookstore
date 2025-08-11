@@ -24,5 +24,9 @@ A full-stack e-commerce bookstore web application inspired by Fully Booked. Buil
 - Add, upate, or delete books/category
 - View and manage registered users
 - View and manage customer orders
-- Secure access via admin login 
+- Secure access via admin login
+
+### Preview
+<img width="946" height="436" alt="image" src="https://github.com/user-attachments/assets/aa5c96f6-a7e1-4730-8259-90b4c5be589f" />
+
   
