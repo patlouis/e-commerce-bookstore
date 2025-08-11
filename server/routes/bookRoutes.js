@@ -3,6 +3,9 @@ import { connectToDatabase } from '../database.js';
 
 const router = express.Router();
 
+/** GET /books  
+    Fetch all books, or filter by title/author
+*/
 router.get('/', async (req, res) => {
   const search = req.query.search?.trim();
   try {
@@ -18,6 +21,9 @@ router.get('/', async (req, res) => {
   }
 });
 
+/** POST /books 
+    Create a new book
+*/
 router.post('/', async (req, res) => {
   const { title, author, desc, cover, price, category_id } = req.body;
   if (!title || !author || !desc || !cover || price == null || !category_id) {
@@ -30,22 +36,28 @@ router.post('/', async (req, res) => {
       'INSERT INTO books (`title`, `author`, `desc`, `cover`, `price`, `category_id`) VALUES (?, ?, ?, ?, ?, ?)',
       [title, author, desc, cover, price, category_id]
     );
-    res.status(201).json({ message: 'Book created' });
+    res.status(201).json({ message: 'Book created successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+/** DELETE /books/:id
+    Remove a book by its id 
+*/ 
 router.delete('/:id', async (req, res) => {
   try {
     const db = await connectToDatabase();
     await db.query('DELETE FROM books WHERE id = ?', [req.params.id]);
-    res.json({ message: 'Book deleted' });
+    res.json({ message: 'Book deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+/** PUT /books/:id
+    Update a book by its id 
+*/ 
 router.put('/:id', async (req, res) => {
   const { title, author, desc, cover, price, category_id } = req.body;
   if (!title || !author || !desc || !cover || price == null || !category_id) {
@@ -58,7 +70,7 @@ router.put('/:id', async (req, res) => {
       'UPDATE books SET `title`=?, `author`=?, `desc`=?, `cover`=?, `price`=?, `category_id`=? WHERE id=?',
       [title, author, desc, cover, price, category_id, req.params.id]
     );
-    res.json({ message: 'Book updated' });
+    res.json({ message: 'Book updated successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
