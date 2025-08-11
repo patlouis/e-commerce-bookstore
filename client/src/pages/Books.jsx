@@ -112,11 +112,15 @@ function Books() {
 
         {/* Books Grid */}
         {loadingBooks ? (
-          <p>Loading books...</p>
+          <div className="flex items-center justify-center py-10">
+            <div className="h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
         ) : errorBooks ? (
           <p className="text-red-600">{errorBooks}</p>
         ) : filteredBooks.length === 0 ? (
-          <p>No books found{search ? ` for "${search}"` : ""} in this category.</p>
+          <p className="flex items-center justify-center py-10 text-gray-600">
+            No books found{search ? ` for "${search}"` : ""} in this category.
+          </p>
         ) : (
           <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4 items-stretch">
             {filteredBooks.map((book) => (

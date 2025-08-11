@@ -11,6 +11,9 @@ function NavBar() {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
+
     localStorage.removeItem('token');
     setToken(null);
     navigate('/login');
@@ -55,14 +58,14 @@ function NavBar() {
         <div className="flex-1 flex justify-center">
           <form
             onSubmit={handleSearchSubmit}
-            className="w-full max-w-md flex bg-white rounded-md overflow-hidden"
+            className="w-full max-w-md flex bg-white rounded-sm overflow-hidden"
           >
             <input
               type="text"
               placeholder="Search books or authors..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-grow px-3 py-2 text-black outline-none"
+              className="flex-grow px-3 py-2 text-black text-[14px] outline-none"
             />
             <button
               type="submit"
