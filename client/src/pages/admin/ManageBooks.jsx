@@ -30,7 +30,6 @@ export default function ManageBooks() {
 
   useEffect(() => {
     fetchBooks();
-    fetchCategories();
   }, []);
 
   const fetchBooks = async () => {
@@ -44,15 +43,6 @@ export default function ManageBooks() {
       console.error(err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/categories`);
-      setCategories(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error("Error fetching categories:", err);
     }
   };
 
