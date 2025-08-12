@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"; // ⬅️ CHANGED: added useMemo
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { FaSortUp, FaSortDown } from "react-icons/fa";
 import NavBar from "../../components/NavBar";
@@ -132,6 +132,7 @@ export default function ManageBooks() {
     setSortConfig({ key, direction });
   };
 
+  // ⬅️ CHANGED: Pre-compute category lookup map
   const categoryMap = useMemo(() => {
     return categories.reduce((acc, c) => {
       acc[c.id] = c.name;
@@ -139,6 +140,7 @@ export default function ManageBooks() {
     }, {});
   }, [categories]);
 
+  // ⬅️ CHANGED: Added proper date sorting
   const sortedBooks = [...books].sort((a, b) => {
     if (!sortConfig.key) return 0;
     let valA, valB;
