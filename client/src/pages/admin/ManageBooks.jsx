@@ -30,6 +30,7 @@ export default function ManageBooks() {
 
   useEffect(() => {
     fetchBooks();
+    fetchCategories();
   }, []);
 
   const fetchBooks = async () => {
@@ -45,6 +46,15 @@ export default function ManageBooks() {
       setLoading(false);
     }
   };
+
+const fetchCategories = async () => {
+  try {
+    const res = await axios.get(`${API_BASE_URL}/categories`);
+    setCategories(Array.isArray(res.data) ? res.data : []);
+  } catch (err) {
+    console.error("Failed to load categories", err);
+  }
+};
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this book?")) return;
