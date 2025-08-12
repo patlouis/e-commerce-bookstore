@@ -1,5 +1,5 @@
 import express from 'express';
-import { connectToDatabase } from '../database.js';
+import { connectToDatabase } from '../lib/database.js';
 import { verifyToken } from './authMiddleware.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
