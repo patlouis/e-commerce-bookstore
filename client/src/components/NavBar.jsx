@@ -49,9 +49,11 @@ function NavBar() {
             <span className="block w-5 h-0.5 bg-white rounded"></span>
             <span className="block w-5 h-0.5 bg-white rounded"></span>
           </button>
-          <Link to="/" className="text-xl font-bold hover:underline">
-            Fully Booked
-          </Link>
+          <button>
+            <Link to="/" className="text-xl font-bold hover:no-underline">
+              FULLY BOOKED
+            </Link>
+          </button>
         </div>
 
         {/* Center: Search bar */}
@@ -80,7 +82,7 @@ function NavBar() {
         <div className="flex-1 flex justify-end space-x-6 text-sm">
           {token ? (
             <>
-              <Link to="/user" className="hover:underline">
+              <Link to="/user" className="hover:no-underline">
                 Profile
               </Link>
               <button onClick={handleLogout} className="hover:underline cursor-pointer">
@@ -89,10 +91,10 @@ function NavBar() {
             </>
           ) : (
             <>
-              <Link to="/login" className="hover:underline">
+              <Link to="/login" className="hover:no-underline">
                 Login
               </Link>
-              <Link to="/signup" className="hover:underline">
+              <Link to="/signup" className="hover:no-underline">
                 Sign Up
               </Link>
             </>

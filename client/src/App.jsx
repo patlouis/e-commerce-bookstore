@@ -5,6 +5,7 @@ import Update from './pages/Update'
 import Signup from './pages/auth/Signup'
 import Login from './pages/auth/Login'
 import UserProfile from './pages/UserProfile'
+import ManageBooks from './pages/admin/ManageBooks'
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/signup" element={<Signup/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/user" element={<UserProfile/>} />
+        <Route path="/manage/books" element={<ManageBooks />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>
