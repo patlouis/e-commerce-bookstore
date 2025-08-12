@@ -12,6 +12,7 @@ export default function ManageBooks() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [form, setForm] = useState({
     title: "",
@@ -66,7 +67,6 @@ export default function ManageBooks() {
 
   const openModal = (book = null) => {
     if (book) {
-      // ⬅️ CHANGED: Only map editable fields when editing
       setForm({
         title: book.title,
         author: book.author,
@@ -132,7 +132,6 @@ export default function ManageBooks() {
     setSortConfig({ key, direction });
   };
 
-  // ⬅️ CHANGED: Pre-compute category lookup map
   const categoryMap = useMemo(() => {
     return categories.reduce((acc, c) => {
       acc[c.id] = c.name;
@@ -140,7 +139,7 @@ export default function ManageBooks() {
     }, {});
   }, [categories]);
 
-  // ⬅️ CHANGED: Added proper date sorting
+  // 1. Sort books first
   const sortedBooks = [...books].sort((a, b) => {
     if (!sortConfig.key) return 0;
     let valA, valB;
@@ -166,6 +165,16 @@ export default function ManageBooks() {
     return 0;
   });
 
+  // 2. Filter the sorted list
+  const filteredBooks = sortedBooks.filter((b) => {
+    const q = searchQuery.toLowerCase();
+    return (
+      b.title.toLowerCase().includes(q) ||
+      b.author.toLowerCase().includes(q) ||
+      (categoryMap[b.category_id] || "").toLowerCase().includes(q)
+    );
+  });
+
   const renderSortIcon = (key) => {
     if (sortConfig.key !== key) return null;
     return sortConfig.direction === "asc" ? (
@@ -180,14 +189,23 @@ export default function ManageBooks() {
       <NavBar />
       <main className="min-h-screen px-4 sm:px-6 lg:px-10 pt-20 bg-[#f9f9f9] font-sans">
         <div className="max-w-[1300px] mx-auto">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
             <h1 className="text-2xl font-bold">Manage Books</h1>
-            <button
-              onClick={() => openModal()}
-              className="bg-gray-600 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-700 transition cursor-pointer"
-            >
-              Add New Book
-            </button>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <input
+                type="text"
+                placeholder="Search books..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="border rounded-md px-3 py-2 w-full sm:w-64"
+              />
+              <button
+                onClick={() => openModal()}
+                className="bg-gray-600 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-700 transition cursor-pointer"
+              >
+                Add New Book
+              </button>
+            </div>
           </div>
 
           {loading ? (
@@ -223,7 +241,7 @@ export default function ManageBooks() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedBooks.map((b) => (
+                  {filteredBooks.map((b) => (
                     <tr key={b.id} className="border-t hover:bg-gray-50">
                       <td className="px-4 py-3">{b.title}</td>
                       <td className="px-4 py-3">{b.author}</td>
