@@ -145,7 +145,7 @@ export default function ManageBooks() {
                 className="border rounded-md pl-3 py-1.5 w-full sm:w-64"
               />
               <button
-                onClick={() => navigate("/create")}
+                onClick={() => navigate("/books/create")}
                 className="bg-gray-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-gray-700 transition cursor-pointer"
               >
                 Add New Book
@@ -196,7 +196,7 @@ export default function ManageBooks() {
                       <td className="px-4 py-3">{dayjs(b.updated_at).format("YYYY-MM-DD")}</td>
                       <td className="px-4 py-3 flex justify-end gap-2">
                         <button
-                          onClick={() => navigate(`/update/${b.id}`)}
+                          onClick={() => navigate(`/books/update/${b.id}`)}
                           className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-md hover:bg-yellow-200 cursor-pointer"
                         >
                           Edit

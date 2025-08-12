@@ -142,7 +142,7 @@ function Books() {
                 <div className="flex flex-col mt-auto w-full">
                   {token ? (
                     <>
-                      <Link to={`/update/${book.id}`} className="w-full">
+                      <Link to={`/books/update/${book.id}`} className="w-full">
                         <button
                           className="w-full bg-[#e6f0ff] text-[#0047ab] text-sm mt-3 py-2 rounded-md hover:bg-[#cce0ff] transition-colors cursor-pointer"
                         >
