@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaSortUp, FaSortDown } from "react-icons/fa";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
 import dayjs from "dayjs";
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = "http://localhost:3000";
 
 export default function ManageBooks() {
   const [books, setBooks] = useState([]);
@@ -13,24 +14,14 @@ export default function ManageBooks() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const [form, setForm] = useState({
-    title: "",
-    author: "",
-    desc: "",
-    cover: "",
-    price: "",
-    category_id: ""
-  });
-
-  const [editingBookId, setEditingBookId] = useState(null);
   const [token, setToken] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
-    direction: "asc"
+    direction: "asc",
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -65,61 +56,15 @@ export default function ManageBooks() {
     }
   };
 
-  const openModal = (book = null) => {
-    if (book) {
-      setForm({
-        title: book.title,
-        author: book.author,
-        desc: book.desc,
-        cover: book.cover,
-        price: book.price,
-        category_id: book.category_id
-      });
-      setEditingBookId(book.id);
-    } else {
-      setForm({
-        title: "",
-        author: "",
-        desc: "",
-        cover: "",
-        price: "",
-        category_id: ""
-      });
-      setEditingBookId(null);
-    }
-    setModalOpen(true);
-  };
-
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this book?")) return;
     try {
       await axios.delete(`${API_BASE_URL}/books/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setBooks(books.filter((b) => b.id !== id));
+      setBooks((prev) => prev.filter((b) => b.id !== id));
     } catch (err) {
       alert("Delete failed.");
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!token) return alert("Unauthorized");
-
-    try {
-      if (editingBookId) {
-        await axios.put(`${API_BASE_URL}/books/${editingBookId}`, form, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      } else {
-        await axios.post(`${API_BASE_URL}/books`, form, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      }
-      fetchBooks();
-      setModalOpen(false);
-    } catch (err) {
-      alert("Save failed.");
       console.error(err);
     }
   };
@@ -139,7 +84,7 @@ export default function ManageBooks() {
     }, {});
   }, [categories]);
 
-  // 1. Sort books first
+  // Sort books
   const sortedBooks = [...books].sort((a, b) => {
     if (!sortConfig.key) return 0;
     let valA, valB;
@@ -165,7 +110,7 @@ export default function ManageBooks() {
     return 0;
   });
 
-  // 2. Filter the sorted list
+  // Filter books
   const filteredBooks = sortedBooks.filter((b) => {
     const q = searchQuery.toLowerCase();
     return (
@@ -197,11 +142,11 @@ export default function ManageBooks() {
                 placeholder="Search books..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="border rounded-md px-3 py-2 w-full sm:w-64"
+                className="border rounded-md pl-3 py-1.5 w-full sm:w-64"
               />
               <button
-                onClick={() => openModal()}
-                className="bg-gray-600 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-700 transition cursor-pointer"
+                onClick={() => navigate("/create")}
+                className="bg-gray-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-gray-700 transition cursor-pointer"
               >
                 Add New Book
               </button>
@@ -251,7 +196,7 @@ export default function ManageBooks() {
                       <td className="px-4 py-3">{dayjs(b.updated_at).format("YYYY-MM-DD")}</td>
                       <td className="px-4 py-3 flex justify-end gap-2">
                         <button
-                          onClick={() => openModal(b)}
+                          onClick={() => navigate(`/update/${b.id}`)}
                           className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-md hover:bg-yellow-200 cursor-pointer"
                         >
                           Edit
@@ -270,86 +215,6 @@ export default function ManageBooks() {
             </div>
           )}
         </div>
-
-        {modalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full">
-              <h2 className="text-xl font-bold mb-4">
-                {editingBookId ? "Edit Book" : "Add Book"}
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-3">
-                <input
-                  type="text"
-                  placeholder="Title"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full border px-3 py-2 rounded-md"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Author"
-                  value={form.author}
-                  onChange={(e) => setForm({ ...form, author: e.target.value })}
-                  className="w-full border px-3 py-2 rounded-md"
-                  required
-                />
-                <textarea
-                  placeholder="Description"
-                  value={form.desc}
-                  onChange={(e) => setForm({ ...form, desc: e.target.value })}
-                  className="w-full border px-3 py-2 rounded-md"
-                  required
-                />
-                <input
-                  type="url"
-                  placeholder="Cover URL"
-                  value={form.cover}
-                  onChange={(e) => setForm({ ...form, cover: e.target.value })}
-                  className="w-full border px-3 py-2 rounded-md"
-                  required
-                />
-                <input
-                  type="number"
-                  placeholder="Price"
-                  value={form.price}
-                  onChange={(e) => setForm({ ...form, price: e.target.value })}
-                  className="w-full border px-3 py-2 rounded-md"
-                  required
-                />
-                <select
-                  value={form.category_id}
-                  onChange={(e) => setForm({ ...form, category_id: e.target.value })}
-                  className="w-full border px-3 py-2 rounded-md"
-                  required
-                >
-                  <option value="">Select category</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-
-                <div className="flex justify-end gap-2 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setModalOpen(false)}
-                    className="px-4 py-2 border rounded-md"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  >
-                    Save
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
       </main>
       <Footer />
     </>

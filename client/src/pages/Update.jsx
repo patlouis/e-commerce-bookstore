@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Update = () => {
   const [book, setBook] = useState({
@@ -58,7 +58,7 @@ const Update = () => {
     e.preventDefault();
     try {
       await axios.put(`http://localhost:3000/books/${id}`, book);
-      navigate('/');
+      navigate(-1);
     } catch (error) {
       console.error(error);
     }
@@ -141,9 +141,12 @@ const Update = () => {
         Update
       </button>
 
-      <Link to="/" className="text-sm text-blue-600 hover:underline mt-2">
-        ← Back to Books
-      </Link>
+      <button
+        onClick={() => navigate(-1)}
+        className="text-sm text-blue-600 hover:underline mt-2 bg-transparent border-none cursor-pointer"
+      >
+        ← Go Back
+      </button>
     </div>
   );
 };

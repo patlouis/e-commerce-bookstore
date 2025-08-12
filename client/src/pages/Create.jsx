@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Create = () => {
   const [book, setBook] = useState({
@@ -9,7 +9,7 @@ const Create = () => {
     desc: '',
     price: '',
     cover: '',
-    category_id: '', // added category_id
+    category_id: '',
   });
 
   const [categories, setCategories] = useState([]);
@@ -46,7 +46,7 @@ const Create = () => {
 
     try {
       await axios.post('http://localhost:3000/books', book);
-      navigate('/');
+      navigate(-1);
     } catch (error) {
       console.error(error);
       setError('Something went wrong while creating the book.');
@@ -125,9 +125,12 @@ const Create = () => {
         Create
       </button>
 
-      <Link to="/" className="text-sm text-blue-600 hover:underline mt-2">
-        ← Back to Books
-      </Link>
+      <button
+        onClick={() => navigate(-1)}
+        className="text-sm text-blue-600 hover:underline mt-2 bg-transparent border-none cursor-pointer"
+      >
+        ← Go Back
+      </button>
     </div>
   );
 };
