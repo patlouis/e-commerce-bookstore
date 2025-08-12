@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
-import Categories from "../components/Categories";
 
 const API_BASE_URL = "http://localhost:3000";
 
