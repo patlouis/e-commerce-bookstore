@@ -164,6 +164,9 @@ export default function ManageBooks() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-100 text-gray-700">
                   <tr>
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("id")}>
+                      ID {renderSortIcon("id")}
+                    </th>
                     <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("title")}>
                       Title {renderSortIcon("title")}
                     </th>
@@ -188,6 +191,7 @@ export default function ManageBooks() {
                 <tbody>
                   {filteredBooks.map((b) => (
                     <tr key={b.id} className="border-t hover:bg-gray-50">
+                      <td className="px-4 py-3">{b.id}</td>
                       <td className="px-4 py-3">{b.title}</td>
                       <td className="px-4 py-3">{b.author}</td>
                       <td className="px-4 py-3">₱{b.price}</td>

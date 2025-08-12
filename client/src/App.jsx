@@ -9,6 +9,7 @@ import UserProfile from './pages/UserProfile'
 // admin pages
 import ManageBooks from './pages/admin/ManageBooks'
 import ManageCategories from './pages/admin/ManageCategories'
+import ManageUsers from './pages/admin/ManageUsers'
 
 function App() {
 
@@ -22,8 +23,13 @@ function App() {
         <Route path="/signup" element={<Signup/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/user" element={<UserProfile/>} />
+        
+        {/* Admin routes */}
         <Route path="/manage/books" element={<ManageBooks />} />
         <Route path="/manage/categories" element={<ManageCategories />} />
+        <Route path="/manage/users" element={<ManageUsers />} />
+        
+        {/* Fallback route for 404 */}
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>
