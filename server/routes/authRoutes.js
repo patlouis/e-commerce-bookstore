@@ -1,5 +1,6 @@
 import express from 'express';
 import { connectToDatabase } from '../database.js';
+import { verifyToken } from './authMiddleware.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -66,24 +67,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-const verifyToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(403).json({ message: 'Token not provided.' });
-    }
-
-    const token = authHeader.split(' ')[1];
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.userId = decoded.id;
-        next();
-    } catch (error) {
-        return res.status(401).json({ message: 'Invalid or expired token.' });
-    }
-    };
-
-
 router.get('/home', verifyToken, async (req, res) => {
     try {
         const db = await connectToDatabase();
@@ -102,7 +85,7 @@ router.get('/profile', verifyToken, async (req, res) => {
     const db = await connectToDatabase();
     const [rows] = await db.query(
       'SELECT id, username, email, created_at FROM users WHERE id = ?',
-      [req.userId] // ✅ use userId from verifyToken
+      [req.userId]
     );
 
     if (rows.length === 0) {

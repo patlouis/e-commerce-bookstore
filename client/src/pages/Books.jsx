@@ -74,12 +74,6 @@ function Books() {
           (book) => Number(book.category_id) === Number(selectedCategory)
         );
 
-  const selectedCategoryName =
-    selectedCategory === null
-      ? "Our Collection"
-      : categories.find((cat) => Number(cat.id) === Number(selectedCategory))
-          ?.name || "";
-
   const handleDelete = async (id) => {
     if (!token) return;
 
