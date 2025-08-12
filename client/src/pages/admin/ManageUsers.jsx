@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { FaSortUp, FaSortDown } from "react-icons/fa";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
@@ -22,8 +21,6 @@ export default function ManageUsers() {
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [updateUser, setUpdateUser] = useState(null);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -37,7 +34,9 @@ export default function ManageUsers() {
       setLoading(true);
       setError(null);
       const res = await axios.get(`${API_BASE_URL}/users`, {
-        headers: { Authorization: `Bearer ${authToken}` },
+        headers: { 
+          Authorization: `Bearer ${authToken}` 
+        },
       });
       setUsers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
@@ -265,7 +264,7 @@ export default function ManageUsers() {
                 placeholder="Search users..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="border rounded-md pl-3 py-1.5 w-full sm:w-64"
+                className="border rounded-md pl-3 py-1.5 w-full sm:w-64 bg-white"
               />
               <button
                 onClick={() => setCreateModalOpen(true)}

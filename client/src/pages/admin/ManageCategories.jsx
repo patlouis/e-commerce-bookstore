@@ -18,7 +18,7 @@ export default function ManageCategories() {
   // Modal controls
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const [updateCategory, setUpdateCategory] = useState(null); // category to edit
+  const [updateCategory, setUpdateCategory] = useState(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -47,7 +47,9 @@ export default function ManageCategories() {
     if (!window.confirm("Delete this category?")) return;
     try {
       await axios.delete(`${API_BASE_URL}/categories/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        },
       });
       setCategories((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
@@ -230,7 +232,7 @@ export default function ManageCategories() {
                 placeholder="Search categories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="border rounded-md pl-3 py-1.5 w-full sm:w-64"
+                className="border rounded-md pl-3 py-1.5 w-full sm:w-64 bg-white"
               />
               <button
                 onClick={() => setCreateModalOpen(true)}

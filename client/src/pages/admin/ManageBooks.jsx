@@ -142,7 +142,7 @@ const fetchCategories = async () => {
                 placeholder="Search books..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="border rounded-md pl-3 py-1.5 w-full sm:w-64"
+                className="border rounded-md pl-3 py-1.5 w-full sm:w-64 bg-white"
               />
               <button
                 onClick={() => navigate("/books/create")}
