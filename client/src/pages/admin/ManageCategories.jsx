@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { FaSortUp, FaSortDown } from "react-icons/fa";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
@@ -14,12 +13,12 @@ export default function ManageCategories() {
   const [searchQuery, setSearchQuery] = useState("");
   const [token, setToken] = useState(null);
 
-  const [sortConfig, setSortConfig] = useState({
-    key: null,
-    direction: "asc",
-  });
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
-  const navigate = useNavigate();
+  // Modal controls
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [updateCategory, setUpdateCategory] = useState(null); // category to edit
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -92,6 +91,132 @@ export default function ManageCategories() {
     );
   };
 
+  // ===== Create Modal Component =====
+  function CategoryCreateModal({ isOpen, onClose }) {
+    const [name, setName] = useState("");
+    const [error, setError] = useState("");
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (!name.trim()) {
+        setError("Category name is required.");
+        return;
+      }
+      try {
+        await axios.post(
+          `${API_BASE_URL}/categories`,
+          { name },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        onClose();
+        fetchCategories();
+      } catch (err) {
+        setError("Failed to create category.");
+        console.error(err);
+      }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 backdrop-blur-sm">
+        <div className="bg-white rounded-lg p-6 w-[350px] shadow-lg">
+          <h2 className="text-xl font-semibold mb-4">Create New Category</h2>
+          {error && <p className="text-red-600 mb-2">{error}</p>}
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Category Name"
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:border-blue-500"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-3.5 py-1.5 rounded border border-gray-300 hover:bg-gray-100 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-orange-600 text-white px-3.5 py-1.5 rounded hover:bg-orange-700 cursor-pointer"
+              >
+                Create
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== Update Modal Component =====
+  function CategoryUpdateModal({ isOpen, category, onClose }) {
+    const [name, setName] = useState(category?.name || "");
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+      if (category) setName(category.name);
+    }, [category]);
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (!name.trim()) {
+        setError("Category name is required.");
+        return;
+      }
+      try {
+        await axios.put(
+          `${API_BASE_URL}/categories/${category.id}`,
+          { name },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        onClose();
+        fetchCategories();
+      } catch (err) {
+        setError("Failed to update category.");
+        console.error(err);
+      }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-[350px] shadow-lg">
+          <h2 className="text-xl font-semibold mb-4">Edit Category</h2>
+          {error && <p className="text-red-600 mb-2">{error}</p>}
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Category Name"
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:border-blue-500"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-3.5 py-1.5 rounded border border-gray-300 hover:bg-gray-100 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-orange-600 text-white px-3.5 py-1.5 rounded hover:bg-orange-700 cursor-pointer"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <NavBar />
@@ -108,7 +233,7 @@ export default function ManageCategories() {
                 className="border rounded-md pl-3 py-1.5 w-full sm:w-64"
               />
               <button
-                onClick={() => navigate("/categories/create")}
+                onClick={() => setCreateModalOpen(true)}
                 className="bg-gray-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-gray-700 transition cursor-pointer"
               >
                 Add New Category
@@ -149,7 +274,10 @@ export default function ManageCategories() {
                       <td className="px-4 py-3">{c.name}</td>
                       <td className="px-4 py-3 flex justify-end gap-2">
                         <button
-                          onClick={() => navigate(`/categories/update/${c.id}`)}
+                          onClick={() => {
+                            setUpdateCategory(c);
+                            setUpdateModalOpen(true);
+                          }}
                           className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-md hover:bg-yellow-200 cursor-pointer"
                         >
                           Edit
@@ -165,10 +293,7 @@ export default function ManageCategories() {
                   ))}
                   {filteredCategories.length === 0 && (
                     <tr>
-                      <td
-                        colSpan={3}
-                        className="text-center py-4 text-gray-500"
-                      >
+                      <td colSpan={3} className="text-center py-4 text-gray-500">
                         No categories found.
                       </td>
                     </tr>
@@ -179,6 +304,21 @@ export default function ManageCategories() {
           )}
         </div>
       </main>
+
+      {/* Modals */}
+      <CategoryCreateModal
+        isOpen={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+      />
+      <CategoryUpdateModal
+        isOpen={updateModalOpen}
+        category={updateCategory}
+        onClose={() => {
+          setUpdateModalOpen(false);
+          setUpdateCategory(null);
+        }}
+      />
+
       <Footer />
     </>
   );
