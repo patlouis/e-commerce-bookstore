@@ -33,7 +33,9 @@ export default function ManageCategories() {
       setLoading(true);
       setError(null);
       const res = await axios.get(`${API_BASE_URL}/categories`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        },
       });
       setCategories(Array.isArray(res.data) ? res.data : []);
     } catch (err) {

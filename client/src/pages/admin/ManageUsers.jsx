@@ -23,19 +23,22 @@ export default function ManageUsers() {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
-      fetchUsers(storedToken);
-    }
+    setToken(storedToken);
   }, []);
 
-  const fetchUsers = async (authToken) => {
+  useEffect(() => {
+    if (token) {
+      fetchUsers();
+    }
+  }, [token]);
+
+  const fetchUsers = async () => {
     try {
       setLoading(true);
       setError(null);
       const res = await axios.get(`${API_BASE_URL}/users`, {
         headers: { 
-          Authorization: `Bearer ${authToken}` 
+          Authorization: `Bearer ${token}` 
         },
       });
       setUsers(Array.isArray(res.data) ? res.data : []);

@@ -25,17 +25,22 @@ export default function ManageBooks() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
-    if (storedToken) {
+  }, []);
+
+  useEffect(() => {
+    if (token) {
       fetchBooks();
     }
-  }, []);
+  }, [token]);
 
   const fetchBooks = async () => {
     try {
       setLoading(true);
       setError(null);
       const res = await axios.get(`${API_BASE_URL}/books`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        },
       });
       setBooks(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
