@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaSortUp, FaSortDown } from "react-icons/fa";
@@ -10,7 +10,6 @@ const API_BASE_URL = "http://localhost:3000";
 
 export default function ManageBooks() {
   const [books, setBooks] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,9 +25,8 @@ export default function ManageBooks() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
-    if(storedToken) {
+    if (storedToken) {
       fetchBooks();
-      fetchCategories();
     }
   }, []);
 
@@ -47,15 +45,6 @@ export default function ManageBooks() {
       setLoading(false);
     }
   };
-
-const fetchCategories = async () => {
-  try {
-    const res = await axios.get(`${API_BASE_URL}/categories`);
-    setCategories(Array.isArray(res.data) ? res.data : []);
-  } catch (err) {
-    console.error("Failed to load categories", err);
-  }
-};
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this book?")) return;
@@ -78,27 +67,15 @@ const fetchCategories = async () => {
     setSortConfig({ key, direction });
   };
 
-  const categoryMap = useMemo(() => {
-    return categories.reduce((acc, c) => {
-      acc[c.id] = c.name;
-      return acc;
-    }, {});
-  }, [categories]);
-
   // Sort books
   const sortedBooks = [...books].sort((a, b) => {
     if (!sortConfig.key) return 0;
-    let valA, valB;
+    let valA = a[sortConfig.key];
+    let valB = b[sortConfig.key];
 
-    if (sortConfig.key === "category") {
-      valA = categoryMap[a.category_id] || "";
-      valB = categoryMap[b.category_id] || "";
-    } else if (["created_at", "updated_at"].includes(sortConfig.key)) {
-      valA = new Date(a[sortConfig.key]);
-      valB = new Date(b[sortConfig.key]);
-    } else {
-      valA = a[sortConfig.key];
-      valB = b[sortConfig.key];
+    if (["created_at", "updated_at"].includes(sortConfig.key)) {
+      valA = new Date(valA);
+      valB = new Date(valB);
     }
 
     if (typeof valA === "string" && !(valA instanceof Date)) {
@@ -117,7 +94,7 @@ const fetchCategories = async () => {
     return (
       (b.title || "").toLowerCase().includes(q) ||
       (b.author || "").toLowerCase().includes(q) ||
-      (categoryMap[b.category_id] || "").toLowerCase().includes(q)
+      (b.category_name || "").toLowerCase().includes(q)
     );
   });
 
@@ -177,8 +154,8 @@ const fetchCategories = async () => {
                     <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("price")}>
                       Price {renderSortIcon("price")}
                     </th>
-                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("category")}>
-                      Category {renderSortIcon("category")}
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("category_name")}>
+                      Category {renderSortIcon("category_name")}
                     </th>
                     <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("created_at")}>
                       Created At {renderSortIcon("created_at")}
@@ -195,8 +172,8 @@ const fetchCategories = async () => {
                       <td className="px-4 py-3">{b.id}</td>
                       <td className="px-4 py-3">{b.title}</td>
                       <td className="px-4 py-3">{b.author}</td>
-                      <td className="px-4 py-3">₱{Number(b.price).toFixed(2)}</td>
-                      <td className="px-4 py-3">{categoryMap[b.category_id] || ""}</td>
+                      <td className="px-4 py-3">₱{b.price}</td>
+                      <td className="px-4 py-3">{b.category_name || ""}</td>
                       <td className="px-4 py-3">{dayjs(b.created_at).format("YYYY-MM-DD")}</td>
                       <td className="px-4 py-3">{dayjs(b.updated_at).format("YYYY-MM-DD")}</td>
                       <td className="px-4 py-3 flex justify-end gap-2">

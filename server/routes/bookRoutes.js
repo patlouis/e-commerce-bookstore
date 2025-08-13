@@ -10,10 +10,26 @@ router.get('/', async (req, res) => {
   const search = req.query.search?.trim();
   try {
     const db = await connectToDatabase();
-    const sql = search
-      ? `SELECT * FROM books WHERE title LIKE ? OR author LIKE ?`
-      : `SELECT * FROM books`;
-    const params = search ? [`%${search}%`, `%${search}%`] : [];
+    let sql = `
+      SELECT 
+        b.id,
+        b.title,
+        b.author,
+        b.price,
+        b.cover,
+        b.created_at,
+        b.updated_at,
+        c.name AS category_name
+      FROM books b
+      LEFT JOIN categories c ON b.category_id = c.id
+    `;
+    const params = [];
+
+    if (search) {
+      sql += ` WHERE b.title LIKE ? OR b.author LIKE ? OR c.name LIKE ?`;
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
+
     const [books] = await db.query(sql, params);
     res.json(books);
   } catch (err) {
