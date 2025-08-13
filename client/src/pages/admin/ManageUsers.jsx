@@ -319,6 +319,12 @@ export default function ManageUsers() {
                     >
                       Updated At {renderSortIcon("updated_at")}
                     </th>
+                    <th
+                      className="px-4 py-3 cursor-pointer"
+                      onClick={() => handleSort("role_name")}
+                    >
+                      Role {renderSortIcon("role_name")}
+                    </th>
                     <th className="px-4 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -334,6 +340,7 @@ export default function ManageUsers() {
                       <td className="px-4 py-3">
                         {dayjs(u.updated_at).format("YYYY-MM-DD")}
                       </td>
+                      <td className="px-4 py-3">{u.role_name}</td>
                       <td className="px-4 py-3 flex justify-end gap-2">
                         <button
                           onClick={() => {

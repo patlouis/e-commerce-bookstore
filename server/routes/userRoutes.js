@@ -9,9 +9,17 @@ const router = express.Router();
 router.get('/', verifyToken, async (req, res) => {
   try {
     const db = await connectToDatabase();
-    const [users] = await db.query(
-      'SELECT * FROM users'
-    );
+    const [users] = await db.query(`
+      SELECT 
+        u.id, 
+        u.username, 
+        u.email, 
+        u.created_at, 
+        u.updated_at,
+        r.role AS role_name
+      FROM users u
+      INNER JOIN roles r ON u.role_id = r.id
+    `);
     res.json(users);
   } catch (error) {
     console.error('[Get Users Error]', error);
@@ -33,7 +41,7 @@ router.post('/', verifyToken, async (req, res) => {
     // Check if username already exists
     const [existingUsers] = await db.query('SELECT id FROM users WHERE username = ?', [username]);
     if (existingUsers.length > 0) {
-      return res.status(409).json({ message: 'Username already exists.' }); // 409 Conflict
+      return res.status(409).json({ message: 'Username already exists.' });
     }
 
     const [existingEmails] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
