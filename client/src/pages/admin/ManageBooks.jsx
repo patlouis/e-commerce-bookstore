@@ -26,18 +26,19 @@ export default function ManageBooks() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
-  }, []);
-
-  useEffect(() => {
-    fetchBooks();
-    fetchCategories();
+    if(storedToken) {
+      fetchBooks();
+      fetchCategories();
+    }
   }, []);
 
   const fetchBooks = async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get(`${API_BASE_URL}/books`);
+      const res = await axios.get(`${API_BASE_URL}/books`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setBooks(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       setError("Failed to load books.");
@@ -114,8 +115,8 @@ const fetchCategories = async () => {
   const filteredBooks = sortedBooks.filter((b) => {
     const q = searchQuery.toLowerCase();
     return (
-      b.title.toLowerCase().includes(q) ||
-      b.author.toLowerCase().includes(q) ||
+      (b.title || "").toLowerCase().includes(q) ||
+      (b.author || "").toLowerCase().includes(q) ||
       (categoryMap[b.category_id] || "").toLowerCase().includes(q)
     );
   });
@@ -194,7 +195,7 @@ const fetchCategories = async () => {
                       <td className="px-4 py-3">{b.id}</td>
                       <td className="px-4 py-3">{b.title}</td>
                       <td className="px-4 py-3">{b.author}</td>
-                      <td className="px-4 py-3">₱{b.price}</td>
+                      <td className="px-4 py-3">₱{Number(b.price).toFixed(2)}</td>
                       <td className="px-4 py-3">{categoryMap[b.category_id] || ""}</td>
                       <td className="px-4 py-3">{dayjs(b.created_at).format("YYYY-MM-DD")}</td>
                       <td className="px-4 py-3">{dayjs(b.updated_at).format("YYYY-MM-DD")}</td>

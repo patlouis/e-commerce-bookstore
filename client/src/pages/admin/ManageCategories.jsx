@@ -23,17 +23,18 @@ export default function ManageCategories() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
-  }, []);
-
-  useEffect(() => {
-    fetchCategories();
+    if(storedToken) {
+      fetchCategories();
+    }
   }, []);
 
   const fetchCategories = async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get(`${API_BASE_URL}/categories`);
+      const res = await axios.get(`${API_BASE_URL}/categories`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setCategories(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       setError("Failed to load categories.");
