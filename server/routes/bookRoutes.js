@@ -12,13 +12,7 @@ router.get('/', async (req, res) => {
     const db = await connectToDatabase();
     let sql = `
       SELECT 
-        b.id,
-        b.title,
-        b.author,
-        b.price,
-        b.cover,
-        b.created_at,
-        b.updated_at,
+        b.*,
         c.name AS category_name
       FROM books b
       LEFT JOIN categories c ON b.category_id = c.id
