@@ -1,39 +1,43 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Books from './pages/Books'
-import Create from './pages/Create'
-import Update from './pages/Update'
-import Signup from './pages/auth/Signup'
-import Login from './pages/auth/Login'
-import UserProfile from './pages/UserProfile'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Books from "./pages/Books";
+import Create from "./pages/Create";
+import Update from "./pages/Update";
+import Signup from "./pages/auth/Signup";
+import Login from "./pages/auth/Login";
+import UserProfile from "./pages/UserProfile";
 
 // admin pages
-import ManageBooks from './pages/admin/ManageBooks'
-import ManageCategories from './pages/admin/ManageCategories'
-import ManageUsers from './pages/admin/ManageUsers'
+import ManageBooks from "./pages/admin/ManageBooks";
+import ManageCategories from "./pages/admin/ManageCategories";
+import ManageUsers from "./pages/admin/ManageUsers";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Books/>} />
+        {/* Public routes */}
+        <Route path="/" element={<Books />} />
         <Route path="/books" element={<Books />} />
-        <Route path="/books/create" element={<Create/>} />
-        <Route path="/books/update/:id" element={<Update/>} />
-        <Route path="/signup" element={<Signup/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/user" element={<UserProfile/>} />
-        
-        {/* Admin routes */}
-        <Route path="/manage/books" element={<ManageBooks />} />
-        <Route path="/manage/categories" element={<ManageCategories />} />
-        <Route path="/manage/users" element={<ManageUsers />} />
-        
+        <Route path="/books/create" element={<Create />} />
+        <Route path="/books/update/:id" element={<Update />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/user" element={<UserProfile />} />
+
+        {/* Admin routes - grouped under ProtectedRoute */}
+        <Route element={<ProtectedRoute roleRequired="admin" />}>
+          <Route path="/manage/books" element={<ManageBooks />} />
+          <Route path="/manage/categories" element={<ManageCategories />} />
+          <Route path="/manage/users" element={<ManageUsers />} />
+        </Route>
+
         {/* Fallback route for 404 */}
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
