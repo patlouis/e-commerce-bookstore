@@ -3,6 +3,7 @@ import axios from "axios";
 import { FaSortUp, FaSortDown } from "react-icons/fa";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
+import dayjs from "dayjs";
 
 const API_BASE_URL = "http://localhost:3000";
 
@@ -269,6 +270,12 @@ export default function ManageCategories() {
                     >
                       Name {renderSortIcon("name")}
                     </th>
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("created_at")}>
+                      Created At {renderSortIcon("created_at")}
+                    </th>
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("updated_at")}>
+                      Updated At {renderSortIcon("updated_at")}
+                    </th>
                     <th className="px-4 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -277,6 +284,8 @@ export default function ManageCategories() {
                     <tr key={c.id} className="border-t hover:bg-gray-50">
                       <td className="px-4 py-3">{c.id}</td>
                       <td className="px-4 py-3">{c.name}</td>
+                      <td className="px-4 py-3">{dayjs(c.created_at).format("YYYY-MM-DD HH:mm")}</td>
+                      <td className="px-4 py-3">{dayjs(c.updated_at).format("YYYY-MM-DD HH:mm")}</td>
                       <td className="px-4 py-3 flex justify-end gap-2">
                         <button
                           onClick={() => {
