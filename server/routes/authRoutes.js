@@ -58,7 +58,7 @@ router.post('/login', async (req, res) => {
     const [rows] = await db.query(
       `SELECT u.id, u.username, u.password, u.role_id
        FROM users u
-       JOIN roles r ON u.role_id = r.id
+       LEFT JOIN roles r ON u.role_id = r.id
        WHERE u.email = ?`,
       [email]
     );
@@ -93,11 +93,15 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Display user's personal information
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     const db = await connectToDatabase();
     const [rows] = await db.query(
-      'SELECT id, username, email, created_at FROM users WHERE id = ?',
+      `SELECT u.id, u.username, u.email, u.created_at, r.role
+       FROM users u
+       LEFT JOIN roles r ON u.role_id = r.id
+       WHERE u.id = ?`,
       [req.userId]
     );
 
@@ -111,6 +115,5 @@ router.get('/profile', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-
 
 export default router;
