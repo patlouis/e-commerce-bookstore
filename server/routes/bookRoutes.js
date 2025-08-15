@@ -1,5 +1,6 @@
 import express from 'express';
 import { connectToDatabase } from '../lib/database.js';
+import { verifyToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.get('/', async (req, res) => {
 /** POST /books 
     Create a new book
 */
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const { title, author, desc, cover, price, category_id } = req.body;
   if (!title || !author || !desc || !cover || price == null || !category_id) {
     return res.status(400).json({ error: 'All fields are required, including category_id' });
@@ -55,7 +56,7 @@ router.post('/', async (req, res) => {
 /** DELETE /books/:id
     Remove a book by its id 
 */ 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
   try {
     const db = await connectToDatabase();
     await db.query('DELETE FROM books WHERE id = ?', [req.params.id]);
@@ -68,7 +69,7 @@ router.delete('/:id', async (req, res) => {
 /** PUT /books/:id
     Update a book by its id 
 */ 
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
   const { title, author, desc, cover, price, category_id } = req.body;
   if (!title || !author || !desc || !cover || price == null || !category_id) {
     return res.status(400).json({ error: 'All fields are required, including category_id' });
