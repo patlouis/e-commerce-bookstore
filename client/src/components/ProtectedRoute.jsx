@@ -11,6 +11,12 @@ export default function ProtectedRoute({ roleIdRequired }) {
   try {
     const decoded = jwtDecode(token);
 
+    // Check token expiration
+    if (decoded.exp * 1000 < Date.now()) {
+      localStorage.removeItem("token");
+      return <Navigate to="/login" replace />;
+    }
+
     // roleIdRequired: 1 = admin, 2 = user
     if (roleIdRequired && decoded.role_id !== roleIdRequired) {
       return <Navigate to="/" replace />;
