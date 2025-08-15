@@ -1,6 +1,7 @@
 import express from 'express';
 import { connectToDatabase } from '../lib/database.js';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { verifyToken, authorizeRoles } from '../middlewares/authMiddleware.js';
+import roles from '../config/roles.js';
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) return res.status(400).json({ error: "Name is required" });
@@ -26,7 +27,7 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
   try {
     const { id } = req.params;
     const { name } = req.body;
@@ -39,7 +40,7 @@ router.put('/:id', verifyToken, async (req, res) => {
   }
 });
 
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
   try {
     const { id } = req.params;
     const db = await connectToDatabase();

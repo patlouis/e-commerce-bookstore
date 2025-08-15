@@ -1,12 +1,13 @@
 import express from 'express';
 import { connectToDatabase } from '../lib/database.js';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { verifyToken, authorizeRoles } from '../middlewares/authMiddleware.js';
+import roles from '../config/roles.js';
 import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
 // Get all users (protected, maybe admin only)
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
   try {
     const db = await connectToDatabase();
     const [users] = await db.query(`
@@ -28,7 +29,7 @@ router.get('/', verifyToken, async (req, res) => {
 });
 
 // Create new user (protected)
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', verifyToken, authorizeRoles(roles.ADMIN),async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -64,7 +65,7 @@ router.post('/', verifyToken, async (req, res) => {
 });
 
 // Get single user by id (protected)
-router.get('/:id', verifyToken, async (req, res) => {
+router.get('/:id', verifyToken, authorizeRoles(roles.ADMIN),async (req, res) => {
   const userId = req.params.id;
   try {
     const db = await connectToDatabase();
@@ -83,7 +84,7 @@ router.get('/:id', verifyToken, async (req, res) => {
 });
 
 // Update user by id (protected)
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
   const userId = req.params.id;
   const { username, email, password } = req.body;
 
@@ -121,7 +122,7 @@ router.put('/:id', verifyToken, async (req, res) => {
 });
 
 // Delete user by id (protected)
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
   const userId = req.params.id;
   try {
     const db = await connectToDatabase();
