@@ -27,7 +27,7 @@ function App() {
         <Route path="/user" element={<UserProfile />} />
 
         {/* Admin routes - grouped under ProtectedRoute */}
-        <Route element={<ProtectedRoute roleRequired="admin" />}>
+        <Route element={<ProtectedRoute roleIdRequired={1} />}>
           <Route path="/manage/books" element={<ManageBooks />} />
           <Route path="/manage/categories" element={<ManageCategories />} />
           <Route path="/manage/users" element={<ManageUsers />} />

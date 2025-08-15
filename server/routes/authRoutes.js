@@ -49,23 +49,50 @@ router.post('/signup', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const db = await connectToDatabase();
-        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
-        if(rows.length === 0) {
-            return res.status(401).json({ message: 'User does not exist.' });
-        }
-        const isMatch = await bcrypt.compare(password, rows[0].password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Wrong password.' });
-        }
-        const token = jwt.sign({ id: rows[0].id }, process.env.JWT_SECRET, { expiresIn: '3h' });
-        return res.status(200).json({ token: token });
-    } catch(error) {
-        return res.status(500).json({ message: 'Internal server error.' });
+  const { email, password } = req.body;
+
+  try {
+    const db = await connectToDatabase();
+
+    // Get user + role
+    const [rows] = await db.query(
+      `SELECT u.id, u.username, u.password, u.role_id
+       FROM users u
+       JOIN roles r ON u.role_id = r.id
+       WHERE u.email = ?`,
+      [email]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ message: 'User does not exist.' });
     }
+
+    const user = rows[0];
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Wrong password.' });
+    }
+
+    // Create JWT including role_id
+    const token = jwt.sign(
+      {
+        id: user.id,
+        username: user.username,
+        role_id: user.role_id,      // numeric role check
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '3h' }
+    );
+
+    return res.status(200).json({ token });
+  } catch (error) {
+    console.error('[Login Error]', error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
 });
+
 
 router.get('/home', verifyToken, async (req, res) => {
     try {

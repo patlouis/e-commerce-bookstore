@@ -1,16 +1,22 @@
-import jwt from 'jsonwebtoken';
+export function verifyToken(requiredRoleId) {
+  return (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
 
-export const verifyToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(403).json({ message: 'Token not provided.' });
-  }
-  const token = authHeader.split(' ')[1];
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.id;
-    next();
-  } catch {
-    return res.status(401).json({ message: 'Invalid or expired token.' });
-  }
-};
+    const token = authHeader.split(" ")[1];
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      if (requiredRoleId && decoded.role_id !== requiredRoleId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      req.user = decoded;
+      next();
+    } catch {
+      res.status(401).json({ message: "Invalid token" });
+    }
+  };
+}
