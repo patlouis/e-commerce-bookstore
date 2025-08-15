@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
       {
         id: user.id,
         username: user.username,
-        role_id: user.role_id,      // numeric role check
+        role_id: user.role_id,
       },
       process.env.JWT_SECRET,
       { expiresIn: '3h' }
