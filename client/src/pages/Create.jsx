@@ -45,7 +45,14 @@ const Create = () => {
     }
 
     try {
-      await axios.post('http://localhost:3000/books', book);
+      await axios.post(
+        'http://localhost:3000/books',
+        book,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
       navigate(-1);
     } catch (error) {
       console.error(error);

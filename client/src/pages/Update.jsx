@@ -57,7 +57,11 @@ const Update = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:3000/books/${id}`, book);
+      await axios.put(`http://localhost:3000/books/${id}`, book, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
       navigate(-1);
     } catch (error) {
       console.error(error);
