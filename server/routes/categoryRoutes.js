@@ -1,9 +1,10 @@
 import express from 'express';
 import { connectToDatabase } from '../lib/database.js';
+import { verifyToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const db = await connectToDatabase();
     const [categories] = await db.query('SELECT * FROM categories');

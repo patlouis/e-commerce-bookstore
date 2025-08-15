@@ -93,20 +93,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
-router.get('/home', verifyToken, async (req, res) => {
-    try {
-        const db = await connectToDatabase();
-        const [rows] = await db.query('SELECT * FROM users WHERE id = ?', [req.userId]);
-        if(rows.length === 0) {
-            return res.status(401).json({ message: 'User does not exist.' });
-        }
-        return res.status(200).json({ user: rows[0] });
-    } catch(error) {
-        return res.status(500).json({ message: 'Internal server error.' });
-    }
-});
-
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     const db = await connectToDatabase();
