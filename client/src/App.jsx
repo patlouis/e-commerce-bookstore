@@ -1,7 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Books from "./pages/Books";
-import Create from "./pages/Create";
-import Update from "./pages/Update";
 import Signup from "./pages/auth/Signup";
 import Login from "./pages/auth/Login";
 import UserProfile from "./pages/UserProfile";
@@ -10,6 +8,8 @@ import UserProfile from "./pages/UserProfile";
 import ManageBooks from "./pages/admin/ManageBooks";
 import ManageCategories from "./pages/admin/ManageCategories";
 import ManageUsers from "./pages/admin/ManageUsers";
+import Create from "./pages/Create";
+import Update from "./pages/Update";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -20,8 +20,6 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<Books />} />
         <Route path="/books" element={<Books />} />
-        <Route path="/books/create" element={<Create />} />
-        <Route path="/books/update/:id" element={<Update />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/user" element={<UserProfile />} />
@@ -31,6 +29,8 @@ function App() {
           <Route path="/manage/books" element={<ManageBooks />} />
           <Route path="/manage/categories" element={<ManageCategories />} />
           <Route path="/manage/users" element={<ManageUsers />} />
+          <Route path="/books/create" element={<Create />} />
+          <Route path="/books/update/:id" element={<Update />} />
         </Route>
 
         {/* Fallback route for 404 */}

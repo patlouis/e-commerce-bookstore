@@ -284,8 +284,8 @@ export default function ManageCategories() {
                     <tr key={c.id} className="border-t hover:bg-gray-50">
                       <td className="px-4 py-3">{c.id}</td>
                       <td className="px-4 py-3">{c.name}</td>
-                      <td className="px-4 py-3">{dayjs(c.created_at).format("YYYY-MM-DD HH:mm")}</td>
-                      <td className="px-4 py-3">{dayjs(c.updated_at).format("YYYY-MM-DD HH:mm")}</td>
+                      <td className="px-4 py-3">{dayjs(c.created_at).format("YYYY-MM-DD")}</td>
+                      <td className="px-4 py-3">{dayjs(c.updated_at).format("YYYY-MM-DD")}</td>
                       <td className="px-4 py-3 flex justify-end gap-2">
                         <button
                           onClick={() => {
