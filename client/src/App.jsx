@@ -23,25 +23,28 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public routes (everyone can access) */}
+
+          {/* Public routes */}
           <Route path="/" element={<Home />} />
 
-          {/* Guest-only routes */}
+          {/* Guest routes */}
           <Route element={<PublicRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Route>
 
-          {/* Authenticated users */}
-          <Route path="/user" element={<UserProfile />} />
-
-          {/* Admin-only (role_id = 1) */}
+          {/* Admin routes */}
           <Route element={<ProtectedRoute roleIdRequired={1} />}>
             <Route path="/manage/books" element={<ManageBooks />} />
             <Route path="/manage/categories" element={<ManageCategories />} />
             <Route path="/manage/users" element={<ManageUsers />} />
             <Route path="/books/create" element={<Create />} />
             <Route path="/books/update/:id" element={<Update />} />
+          </Route>
+
+          {/* Authenticated Users (User, Admin) */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/user" element={<UserProfile />} />
           </Route>
 
           {/* Fallback (404 page) */}
