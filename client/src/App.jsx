@@ -1,10 +1,14 @@
+// App.jsx
+// Main app router with public, protected, and admin routes
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Books from "./pages/Books";
+import { AuthProvider } from "./context/AuthContext";
+
+import Home from "./pages/Home";
 import Signup from "./pages/auth/Signup";
 import Login from "./pages/auth/Login";
 import UserProfile from "./pages/UserProfile";
 
-// admin pages
 import ManageBooks from "./pages/admin/ManageBooks";
 import ManageCategories from "./pages/admin/ManageCategories";
 import ManageUsers from "./pages/admin/ManageUsers";
@@ -12,31 +16,39 @@ import Create from "./pages/Create";
 import Update from "./pages/Update";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Books />} />
-        <Route path="/books" element={<Books />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/user" element={<UserProfile />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes (everyone can access) */}
+          <Route path="/" element={<Home />} />
 
-        {/* Admin routes - grouped under ProtectedRoute */}
-        <Route element={<ProtectedRoute roleIdRequired={1} />}>
-          <Route path="/manage/books" element={<ManageBooks />} />
-          <Route path="/manage/categories" element={<ManageCategories />} />
-          <Route path="/manage/users" element={<ManageUsers />} />
-          <Route path="/books/create" element={<Create />} />
-          <Route path="/books/update/:id" element={<Update />} />
-        </Route>
+          {/* Guest-only routes */}
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
 
-        {/* Fallback route for 404 */}
-        <Route path="*" element={<h1>404 Not Found</h1>} />
-      </Routes>
-    </BrowserRouter>
+          {/* Authenticated users */}
+          <Route path="/user" element={<UserProfile />} />
+
+          {/* Admin-only (role_id = 1) */}
+          <Route element={<ProtectedRoute roleIdRequired={1} />}>
+            <Route path="/manage/books" element={<ManageBooks />} />
+            <Route path="/manage/categories" element={<ManageCategories />} />
+            <Route path="/manage/users" element={<ManageUsers />} />
+            <Route path="/books/create" element={<Create />} />
+            <Route path="/books/update/:id" element={<Update />} />
+          </Route>
+
+          {/* Fallback (404 page) */}
+          <Route path="*" element={<h1>404 Not Found</h1>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 
 const API_BASE_URL = "http://localhost:3000";
 
-function Books() {
+function Home() {
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -168,4 +168,4 @@ function Books() {
   );
 }
 
-export default Books;
+export default Home;
