@@ -11,8 +11,8 @@ const Create = () => {
     cover: '',
     category_id: '',
   });
-
   const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -20,10 +20,14 @@ const Create = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setLoadingCategories(true);
         const res = await axios.get('http://localhost:3000/categories');
         setCategories(res.data);
       } catch (err) {
         console.error('Failed to fetch categories:', err);
+        setError('Failed to load categories. Please try again.');
+      } finally {
+        setLoadingCategories(false);
       }
     };
     fetchCategories();
@@ -32,27 +36,15 @@ const Create = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !book.title ||
-      !book.author ||
-      !book.desc ||
-      !book.price ||
-      !book.cover ||
-      !book.category_id
-    ) {
+    if (!book.title || !book.author || !book.desc || !book.price || !book.cover || !book.category_id) {
       setError('Please fill in all fields including category.');
       return;
     }
 
     try {
-      await axios.post(
-        'http://localhost:3000/books',
-        book,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+      await axios.post('http://localhost:3000/books', book, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
       navigate(-1);
     } catch (error) {
       console.error(error);
@@ -75,68 +67,35 @@ const Create = () => {
           />
         )}
 
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          onChange={(e) => setBook({ ...book, title: e.target.value })}
-        />
-        <input
-          type="text"
-          name="author"
-          placeholder="Author"
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          onChange={(e) => setBook({ ...book, author: e.target.value })}
-        />
-        <input
-          type="text"
-          name="desc"
-          placeholder="Description"
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          onChange={(e) => setBook({ ...book, desc: e.target.value })}
-        />
-        <input
-          type="number"
-          name="price"
-          placeholder="Price"
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          onChange={(e) => setBook({ ...book, price: e.target.value })}
-        />
-        <input
-          type="text"
-          name="cover"
-          placeholder="Cover Image URL"
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          onChange={(e) => setBook({ ...book, cover: e.target.value })}
-        />
+        <input type="text" placeholder="Title" className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" onChange={(e) => setBook({ ...book, title: e.target.value })} />
+        <input type="text" placeholder="Author" className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" onChange={(e) => setBook({ ...book, author: e.target.value })} />
+        <input type="text" placeholder="Description" className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" onChange={(e) => setBook({ ...book, desc: e.target.value })} />
+        <input type="number" placeholder="Price" className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" onChange={(e) => setBook({ ...book, price: e.target.value })} />
+        <input type="text" placeholder="Cover Image URL" className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" onChange={(e) => setBook({ ...book, cover: e.target.value })} />
 
-        {/* Category dropdown */}
-        <select
-          name="category_id"
-          value={book.category_id}
-          onChange={(e) => setBook({ ...book, category_id: e.target.value })}
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 cursor-pointer"
-        >
-          <option value="">Select Category</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
+        {/* Category Dropdown */}
+        {loadingCategories ? (
+          <div className="flex items-center justify-center py-2">
+            <div className="h-6 w-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <select
+            value={book.category_id}
+            onChange={(e) => setBook({ ...book, category_id: e.target.value })}
+            className="w-full max-w-[400px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 cursor-pointer"
+          >
+            <option value="">Select Category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
+        )}
 
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-600 text-white px-5 py-2 mt-2 rounded-lg text-sm hover:bg-blue-800 transition-colors cursor-pointer"
-        >
+        <button onClick={handleSubmit} className="bg-blue-600 text-white px-5 py-2 mt-2 rounded-lg text-sm hover:bg-blue-800 transition-colors cursor-pointer">
           Create
         </button>
 
-        <button
-          onClick={() => navigate(-1)}
-          className="text-sm text-blue-600 hover:underline mt-2 bg-transparent border-none cursor-pointer"
-        >
+        <button onClick={() => navigate(-1)} className="text-sm text-blue-600 hover:underline mt-2 bg-transparent border-none cursor-pointer">
           ← Go Back
         </button>
       </div>

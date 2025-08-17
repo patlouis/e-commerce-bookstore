@@ -6,6 +6,7 @@ import Signup from "./pages/auth/Signup";
 import Login from "./pages/auth/Login";
 import UserProfile from "./pages/UserProfile";
 
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageBooks from "./pages/admin/ManageBooks";
 import ManageCategories from "./pages/admin/ManageCategories";
 import ManageUsers from "./pages/admin/ManageUsers";
@@ -32,6 +33,7 @@ function App() {
 
           {/* Admin routes */}
           <Route element={<ProtectedRoute roleIdRequired={1} />}>
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/manage/books" element={<ManageBooks />} />
             <Route path="/manage/categories" element={<ManageCategories />} />
             <Route path="/manage/users" element={<ManageUsers />} />

@@ -5,38 +5,42 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // <-- add loading
 
-  // Run once when the app starts (or page refreshes)
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return; // No token = guest
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const decoded = jwtDecode(token);
-
-      // Check if token is expired
       if (decoded.exp * 1000 > Date.now()) {
-        setUser(decoded); // Save user info (id, email, role_id, etc.)
+        setUser(decoded);
       } else {
-        localStorage.removeItem("token"); // Clean up expired token
+        localStorage.removeItem("token");
       }
     } catch {
-      localStorage.removeItem("token"); // Invalid token format
+      localStorage.removeItem("token");
+    } finally {
+      setLoading(false); // <-- done checking
     }
   }, []);
 
-  // Called after login
   const login = (token) => {
     localStorage.setItem("token", token);
     const decoded = jwtDecode(token);
     setUser(decoded);
   };
 
-  // Called when user logs out
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
   };
+
+  // While checking auth, show nothing or a spinner
+  if (loading) return <div>Loading...</div>;
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
@@ -44,6 +48,7 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
 
 // Custom hook for easier access to auth state
 export const useAuth = () => useContext(AuthContext);

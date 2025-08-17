@@ -12,6 +12,8 @@ const Update = () => {
     category_id: null,
   });
   const [categories, setCategories] = useState([]);
+  const [loadingBook, setLoadingBook] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -19,13 +21,14 @@ const Update = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
+        setLoadingBook(true);
         const res = await axios.get(`http://localhost:3000/books`);
         const selectedBook = res.data.find((b) => b.id === parseInt(id));
-        if (selectedBook) {
-          setBook(selectedBook);
-        }
+        if (selectedBook) setBook(selectedBook);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoadingBook(false);
       }
     };
     fetchBook();
@@ -35,16 +38,18 @@ const Update = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setLoadingCategories(true);
         const res = await axios.get('http://localhost:3000/categories');
         setCategories(res.data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoadingCategories(false);
       }
     };
     fetchCategories();
   }, []);
 
-  // Handle input change for all fields including category_id
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBook((prev) => ({
@@ -53,20 +58,25 @@ const Update = () => {
     }));
   };
 
-  // Submit update
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.put(`http://localhost:3000/books/${id}`, book, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       navigate(-1);
     } catch (error) {
       console.error(error);
     }
   };
+
+  if (loadingBook || loadingCategories) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -81,75 +91,24 @@ const Update = () => {
           />
         )}
 
-        <input
-          type="text"
-          name="title"
-          value={book.title}
-          placeholder="Title"
-          onChange={handleChange}
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-        />
-        <input
-          type="text"
-          name="author"
-          value={book.author || ''}
-          placeholder="Author"
-          onChange={handleChange}
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-        />
-        <input
-          type="text"
-          name="desc"
-          value={book.desc}
-          placeholder="Description"
-          onChange={handleChange}
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-        />
-        <input
-          type="number"
-          name="price"
-          value={book.price}
-          placeholder="Price"
-          onChange={handleChange}
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-        />
-        <input
-          type="text"
-          name="cover"
-          value={book.cover}
-          placeholder="Cover Image URL"
-          onChange={handleChange}
-          className="w-full max-w-[400px] px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-        />
+        <input type="text" name="title" value={book.title} placeholder="Title" onChange={handleChange} className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+        <input type="text" name="author" value={book.author || ''} placeholder="Author" onChange={handleChange} className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+        <input type="text" name="desc" value={book.desc} placeholder="Description" onChange={handleChange} className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+        <input type="number" name="price" value={book.price} placeholder="Price" onChange={handleChange} className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+        <input type="text" name="cover" value={book.cover} placeholder="Cover Image URL" onChange={handleChange} className="w-full max-w-[400px] px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
 
-        {/* Category Dropdown */}
-        <select
-          name="category_id"
-          value={book.category_id || ''}
-          onChange={handleChange}
-          className="w-full max-w-[400px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-        >
-          <option value="" disabled>
-            Select Category
-          </option>
+        <select name="category_id" value={book.category_id || ''} onChange={handleChange} className="w-full max-w-[400px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+          <option value="" disabled>Select Category</option>
           {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
         </select>
 
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-600 text-white px-5 py-2 mt-2 rounded-lg text-sm hover:bg-blue-800 transition-colors cursor-pointer"
-        >
+        <button onClick={handleSubmit} className="bg-blue-600 text-white px-5 py-2 mt-2 rounded-lg text-sm hover:bg-blue-800 transition-colors cursor-pointer">
           Update
         </button>
 
-        <button
-          onClick={() => navigate(-1)}
-          className="text-sm text-blue-600 hover:underline mt-2 bg-transparent border-none cursor-pointer"
-        >
+        <button onClick={() => navigate(-1)} className="text-sm text-blue-600 hover:underline mt-2 bg-transparent border-none cursor-pointer">
           ← Go Back
         </button>
       </div>
