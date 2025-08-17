@@ -28,9 +28,9 @@ A full-stack e-commerce bookstore web application inspired by Fully Booked. Buil
 - Secure access via admin login
 
 ### Preview
-<img width="944" height="437" alt="image" src="https://github.com/user-attachments/assets/5a9278a2-069f-42cc-b8d2-329b02891ecc" />
-<img width="946" height="435" alt="image" src="https://github.com/user-attachments/assets/139ed2c7-2750-4c70-88ae-762a7d13dfd4" />
-<img width="946" height="436" alt="image" src="https://github.com/user-attachments/assets/1890e169-02c1-4cbd-93a4-1291ab2a7bca" />
+<img width="942" height="437" alt="image" src="https://github.com/user-attachments/assets/c01b2478-ae42-489c-9f5d-52ac1ae0146c" />
+<img width="941" height="437" alt="image" src="https://github.com/user-attachments/assets/eeca50a4-4494-4909-bc63-d3cd80465c2e" />
+<img width="944" height="434" alt="image" src="https://github.com/user-attachments/assets/6b945835-cf3a-4d2d-9e48-fa4a4e7aa28c" />
 
 
 
