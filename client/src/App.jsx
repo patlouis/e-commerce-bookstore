@@ -1,6 +1,3 @@
-// App.jsx
-// Main app router with public, protected, and admin routes
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 

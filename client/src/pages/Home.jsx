@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
@@ -10,7 +10,6 @@ function Home() {
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [token, setToken] = useState(null);
 
   const [loadingBooks, setLoadingBooks] = useState(false);
   const [errorBooks, setErrorBooks] = useState(null);
@@ -21,12 +20,6 @@ function Home() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const search = queryParams.get("search") || "";
-
-  // Get token once on mount
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    setToken(storedToken);
-  }, []);
 
   // Fetch books (with search)
   useEffect(() => {
@@ -74,28 +67,17 @@ function Home() {
           (book) => Number(book.category_id) === Number(selectedCategory)
         );
 
-  const handleDelete = async (id) => {
-    if (!token) return;
-
-    const confirmed = window.confirm("Are you sure you want to delete this book?");
-    if (!confirmed) return;
-
-    try {
-      await axios.delete(`${API_BASE_URL}/books/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setBooks(books.filter((book) => book.id !== id));
-    } catch (error) {
-      alert("Failed to delete book. Please try again.");
-      console.error("Delete failed:", error);
+  const handleAddToCart = (book) => {
+    // If not logged in, redirect to login
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in to add books to your cart.");
+      navigate("/login");
+      return;
     }
-  };
 
-  const handleAddToCart = () => {
-    alert("Please log in to add books to your cart.");
-    navigate("/login");
+    // TODO: Replace with API call to add to cart
+    alert(`Book "${book.title}" added to cart!`);
   };
 
   return (
@@ -133,30 +115,12 @@ function Home() {
                 <p className="text-base font-medium mt-1.5">₱{book.price}</p>
 
                 <div className="flex flex-col mt-auto w-full">
-                  {token ? (
-                    <>
-                      <Link to={`/books/update/${book.id}`} className="w-full">
-                        <button
-                          className="w-full bg-[#e6f0ff] text-[#0047ab] text-sm mt-3 py-2 rounded-md hover:bg-[#cce0ff] transition-colors cursor-pointer"
-                        >
-                          Update
-                        </button>
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(book.id)}
-                        className="w-full bg-[#ffe5e5] text-[#cc0000] text-sm mt-2 py-2 rounded-md hover:bg-[#ffcccc] transition-colors cursor-pointer"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={handleAddToCart}
-                      className="w-full bg-orange-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-orange-800 transition-colors cursor-pointer"
-                    >
-                      Add to Cart
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleAddToCart(book)}
+                    className="w-full bg-[#363A36] text-white text-sm mt-3 py-2 rounded-md hover:bg-orange-900 transition-colors cursor-pointer"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </article>
             ))}
