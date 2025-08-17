@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import Sidebar from './SideBar';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import Sidebar from "./SideBar";
 
 function NavBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
@@ -16,14 +16,14 @@ function NavBar() {
     if (!confirmed) return;
 
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
       navigate(`/books?search=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm('');
+      setSearchTerm("");
     }
   };
 
@@ -31,13 +31,12 @@ function NavBar() {
     <>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
-      <nav className="bg-orange-600 text-white px-6 py-3 flex items-center shadow-sm fixed top-0 w-full z-50">
+      <nav className="dark:bg-gray-800 text-white px-6 py-3 flex items-center shadow-sm fixed top-0 w-full z-50">
         {/* Left: Hamburger + Logo */}
         <div className="flex items-center flex-1">
           <button
             onClick={toggleSidebar}
             className="mr-4 flex flex-col justify-center items-center gap-1 cursor-pointer"
-            aria-label="Toggle sidebar menu"
             style={{ width: 28, height: 24 }}
           >
             <span className="block w-5 h-0.5 bg-white rounded"></span>
@@ -71,14 +70,17 @@ function NavBar() {
           </form>
         </div>
 
-        {/* Right: Auth controls */}
-        <div className="flex-1 flex justify-end space-x-6 text-sm">
+        {/* Right: Auth links */}
+        <div className="flex-1 flex justify-end items-center space-x-4 text-sm">
           {user ? (
             <>
               <Link to="/user" className="hover:no-underline">
                 Profile
               </Link>
-              <button onClick={handleLogout} className="hover:underline cursor-pointer">
+              <button
+                onClick={handleLogout}
+                className="hover:underline cursor-pointer"
+              >
                 Logout
               </button>
             </>

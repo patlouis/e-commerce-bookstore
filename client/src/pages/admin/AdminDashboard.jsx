@@ -1,8 +1,10 @@
+// pages/admin/AdminDashboard.jsx
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
+import Dropdown from "../../components/Dropdown";
 
 const API_BASE_URL = "http://localhost:3000";
 
@@ -10,6 +12,7 @@ function AdminDashboard() {
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [sortOrder, setSortOrder] = useState("");
   const [token, setToken] = useState(null);
 
   const [loadingBooks, setLoadingBooks] = useState(false);
@@ -28,7 +31,7 @@ function AdminDashboard() {
     setToken(storedToken);
   }, []);
 
-  // Fetch books (with search)
+  // Fetch books
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -66,13 +69,18 @@ function AdminDashboard() {
     fetchCategories();
   }, []);
 
-  // Filter books by selected category
-  const filteredBooks =
-    selectedCategory === null
-      ? books
-      : books.filter(
-          (book) => Number(book.category_id) === Number(selectedCategory)
-        );
+  // Filtered & sorted books
+  const filteredBooks = books
+    .filter(
+      (book) =>
+        selectedCategory === null ||
+        Number(book.category_id) === Number(selectedCategory)
+    )
+    .sort((a, b) => {
+      if (sortOrder === "asc") return a.price - b.price;
+      if (sortOrder === "desc") return b.price - a.price;
+      return 0;
+    });
 
   const handleDelete = async (id) => {
     if (!token) return;
@@ -98,7 +106,32 @@ function AdminDashboard() {
   return (
     <>
       <NavBar />
-      <main className="min-h-screen w-full px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
+      <main className="min-h-screen w-full px-4 sm:px-6 lg:px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
+
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+          <Dropdown
+            options={[
+              { value: null, label: "All Categories" },
+              ...categories.map((cat) => ({ value: cat.id, label: cat.name })),
+            ]}
+            selected={selectedCategory}
+            setSelected={setSelectedCategory}
+            placeholder="Select Category"
+          />
+
+          <Dropdown
+            options={[
+              { value: "", label: "Sort by" },
+              { value: "asc", label: "Price: Low → High" },
+              { value: "desc", label: "Price: High → Low" },
+            ]}
+            selected={sortOrder}
+            setSelected={setSortOrder}
+            placeholder="Sort by"
+          />
+        </div>
+
         {/* Books Grid */}
         {loadingBooks ? (
           <div className="flex items-center justify-center py-10">
@@ -108,21 +141,21 @@ function AdminDashboard() {
           <p className="text-red-600">{errorBooks}</p>
         ) : filteredBooks.length === 0 ? (
           <p className="flex items-center justify-center py-10 text-gray-600">
-            No books found{search ? ` for "${search}"` : ""} in this category.
+            No books found{search ? ` for "${search}"` : ""}.
           </p>
         ) : (
-          <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4 items-stretch">
+          <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-4">
             {filteredBooks.map((book) => (
               <article
                 key={book.id}
-                className="w-[210px] h-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform"
+                className="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform"
                 tabIndex={0}
                 aria-label={`Book: ${book.title} by ${book.author}, price ₱${book.price}`}
               >
                 <img
                   src={book.cover}
                   alt={`Cover of ${book.title}`}
-                  className="w-[180px] h-[270px] object-cover rounded-md bg-gray-300 self-center"
+                  className="w-full h-64 sm:h-72 md:h-80 object-cover rounded-md bg-gray-300 self-center"
                 />
                 <h2 className="text-base font-semibold mt-4">{book.title}</h2>
                 <p className="text-xs mt-1 text-gray-600">{book.author}</p>
