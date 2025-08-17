@@ -16,7 +16,7 @@ function NavBar() {
 
     localStorage.removeItem('token');
     setToken(null);
-    navigate('/');
+    navigate('/login');
   };
 
   const handleSearchSubmit = (e) => {
@@ -92,10 +92,7 @@ function NavBar() {
           ) : (
             <>
               <Link to="/login" className="hover:no-underline">
-                Login
-              </Link>
-              <Link to="/signup" className="hover:no-underline">
-                Sign Up
+                Login/Register
               </Link>
             </>
           )}

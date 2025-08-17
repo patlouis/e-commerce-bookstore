@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 
-function Signup() {
+function Register() {
   const [values, setValues] = useState({
     username: '',
     email: '',
@@ -46,21 +46,21 @@ function Signup() {
     }
 
     try {
-      await axios.post('http://localhost:3000/auth/signup', {
+      await axios.post('http://localhost:3000/auth/register', {
         username,
         email,
         password
       });
       navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed.');
+      setError(err.response?.data?.message || 'Register failed.');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Sign Up</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Register</h2>
 
         {error && (
           <div className="bg-red-100 text-red-700 p-3 rounded-md mb-4 text-sm">
@@ -137,7 +137,7 @@ function Signup() {
             type="submit"
             className="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition duration-200 font-semibold cursor-pointer"
           >
-            Sign Up
+            Register
           </button>
         </form>
 
@@ -152,4 +152,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Register;

@@ -11,7 +11,7 @@ const isStrongPassword = (password) => {
   return regex.test(password);
 };
 
-router.post('/signup', async (req, res) => {
+router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
 
     // Validate input
@@ -43,7 +43,7 @@ router.post('/signup', async (req, res) => {
         );
         return res.status(201).json({ message: 'User created successfully.' });
     } catch (err) {
-        console.error('[Signup Error]', err);
+        console.error('[Register Error]', err);
         return res.status(500).json({ message: 'Internal server error.' });
   }
 });
