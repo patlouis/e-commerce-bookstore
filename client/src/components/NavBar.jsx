@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Sidebar from './SideBar';
 
 function NavBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem('token'));
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -14,8 +15,7 @@ function NavBar() {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (!confirmed) return;
 
-    localStorage.removeItem('token');
-    setToken(null);
+    logout();
     navigate('/login');
   };
 
@@ -26,11 +26,6 @@ function NavBar() {
       setSearchTerm('');
     }
   };
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    setToken(storedToken);
-  }, []);
 
   return (
     <>
@@ -49,11 +44,9 @@ function NavBar() {
             <span className="block w-5 h-0.5 bg-white rounded"></span>
             <span className="block w-5 h-0.5 bg-white rounded"></span>
           </button>
-          <button>
-            <Link to="/" className="text-xl font-bold hover:no-underline">
-              FULLY BOOKED
-            </Link>
-          </button>
+          <Link to="/" className="text-xl font-bold hover:no-underline">
+            FULLY BOOKED
+          </Link>
         </div>
 
         {/* Center: Search bar */}
@@ -80,7 +73,7 @@ function NavBar() {
 
         {/* Right: Auth controls */}
         <div className="flex-1 flex justify-end space-x-6 text-sm">
-          {token ? (
+          {user ? (
             <>
               <Link to="/user" className="hover:no-underline">
                 Profile
@@ -90,11 +83,9 @@ function NavBar() {
               </button>
             </>
           ) : (
-            <>
-              <Link to="/login" className="hover:no-underline">
-                Login/Register
-              </Link>
-            </>
+            <Link to="/login" className="hover:no-underline">
+              Login/Register
+            </Link>
           )}
         </div>
       </nav>
