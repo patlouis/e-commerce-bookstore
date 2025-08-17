@@ -16,7 +16,7 @@ function NavBar() {
 
     localStorage.removeItem('token');
     setToken(null);
-    navigate('/login');
+    navigate('/');
   };
 
   const handleSearchSubmit = (e) => {
