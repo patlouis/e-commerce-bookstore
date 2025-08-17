@@ -2,7 +2,7 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="dark:bg-gray-800 text-gray-200 pt-10 pb-6 font-sans">
+    <footer className="bg-[#363A36] text-gray-200 pt-10 pb-6 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Logo & About */}
         <div>
@@ -81,7 +81,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Text */}
-      <div className="mt-8 border-t border-gray-700 pt-4 text-center text-xs sm:text-sm select-none text-gray-400">
+      <div className="mt-8 border-t border-[#404440] pt-4 text-center text-xs sm:text-sm select-none text-gray-300">
         &copy; {new Date().getFullYear()} Fully Booked. All rights reserved.
       </div>
     </footer>

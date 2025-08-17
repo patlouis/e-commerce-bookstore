@@ -108,29 +108,33 @@ function AdminDashboard() {
       <NavBar />
       <main className="min-h-screen w-full px-4 sm:px-6 lg:px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+      <div className="flex flex-col sm:flex-row gap-5 mt-4 w-full max-w-[1300px] justify-start">
+        {/* Category Dropdown */}
+        <div className="w-55">
           <Dropdown
-            options={[
-              { value: null, label: "All Categories" },
-              ...categories.map((cat) => ({ value: cat.id, label: cat.name })),
-            ]}
+            options={[{ value: null, label: "All Categories" }, ...categories.map(c => ({ value: c.id, label: c.name }))]}
             selected={selectedCategory}
             setSelected={setSelectedCategory}
             placeholder="Select Category"
           />
+        </div>
 
+        {/* Sort Dropdown */}
+        <div className="w-55">
           <Dropdown
             options={[
               { value: "", label: "Sort by" },
               { value: "asc", label: "Price: Low → High" },
               { value: "desc", label: "Price: High → Low" },
+              { value: "a-z", label: "Title: A → Z" },
+              { value: "z-a", label: "Title: Z → A" },
             ]}
             selected={sortOrder}
             setSelected={setSortOrder}
             placeholder="Sort by"
           />
         </div>
+      </div>
 
         {/* Books Grid */}
         {loadingBooks ? (
