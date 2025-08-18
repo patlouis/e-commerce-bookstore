@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Sidebar from "./SideBar";
+import { User, ShoppingCart } from "lucide-react"; // import icons
 
 function NavBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,7 +23,7 @@ function NavBar() {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      navigate(`/books?search=${encodeURIComponent(searchTerm.trim())}`);
+      navigate(`/?search=${encodeURIComponent(searchTerm.trim())}`);
       setSearchTerm("");
     }
   };
@@ -43,7 +44,7 @@ function NavBar() {
             <span className="block w-5 h-0.5 bg-white rounded"></span>
             <span className="block w-5 h-0.5 bg-white rounded"></span>
           </button>
-          <Link to="/" className="text-xl font-bold hover:no-underline">
+          <Link to="/" className="text-xl font-extrabold hover:no-underline">
             FULLY BOOKED
           </Link>
         </div>
@@ -70,10 +71,19 @@ function NavBar() {
           </form>
         </div>
 
-        {/* Right: Auth links */}
+        {/* Right: Auth links + Cart */}
         <div className="flex-1 flex justify-end items-center space-x-4 text-sm">
           {user ? (
             <>
+              {/* Cart icon */}
+              <Link
+                to="/cart"
+                className="flex items-center space-x-1 hover:no-underline"
+              >
+                <ShoppingCart size={16} />
+                <span>Cart</span>
+              </Link>
+
               <Link to="/user" className="hover:no-underline">
                 Profile
               </Link>
@@ -85,9 +95,24 @@ function NavBar() {
               </button>
             </>
           ) : (
-            <Link to="/login" className="hover:no-underline">
-              Login/Register
-            </Link>
+            <>
+              {/* Cart icon for guests */}
+              <Link
+                to="/login"
+                className="flex items-center space-x-1 hover:no-underline"
+              >
+                <ShoppingCart size={16} />
+                <span>Cart</span>
+              </Link>
+
+              <Link
+                to="/login"
+                className="flex items-center space-x-1 hover:no-underline"
+              >
+                <User size={16} />
+                <span>Login/Register</span>
+              </Link>
+            </>
           )}
         </div>
       </nav>

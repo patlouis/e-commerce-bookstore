@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Logo & About */}
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 cursor-default">FULLY BOOKED</h2>
+          <h2 className="text-xl sm:text-2xl font-extrabold mb-3 sm:mb-4 cursor-default">FULLY BOOKED</h2>
           <p className="text-sm sm:text-base leading-relaxed">
             Your one-stop shop for the latest bestsellers, classics, and
             everything in between. Dive into a world of stories with us.

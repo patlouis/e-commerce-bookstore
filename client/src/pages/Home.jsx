@@ -90,8 +90,8 @@ function Home() {
       <main className="min-h-screen w-full px-4 sm:px-6 lg:px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
 
         {/* Dropdowns */}
-        <div className="flex flex-col sm:flex-row gap-5 mt-4 w-full max-w-[1300px] justify-start">
-          <div className="w-55">
+        <div className="flex flex-col sm:flex-row gap-6 mt-4 w-full max-w-[1300px] justify-start">
+          <div className="w-60">
             <Dropdown
               options={[{ value: null, label: "All Categories" }, ...categories.map(c => ({ value: c.id, label: c.name }))]}
               selected={selectedCategory}
@@ -99,7 +99,7 @@ function Home() {
               placeholder="Select Category"
             />
           </div>
-          <div className="w-55">
+          <div className="w-61">
             <Dropdown
               options={[
                 { value: "", label: "Sort by" },
