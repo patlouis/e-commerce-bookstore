@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Sidebar from "./SideBar";
-import { User, ShoppingCart } from "lucide-react"; // import icons
+import { User, ShoppingCart } from "lucide-react";
 
 function NavBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,10 +22,17 @@ function NavBar() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/?search=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm("");
+    if (!searchTerm.trim()) return;
+
+    if (user?.role_id === 1) {
+      // Admin → go to admin search page
+      navigate(`/admin?query=${encodeURIComponent(searchTerm.trim())}`);
+    } else {
+      // Guest/User → normal search
+      navigate(`/?query=${encodeURIComponent(searchTerm.trim())}`);
     }
+
+    setSearchTerm("");
   };
 
   return (

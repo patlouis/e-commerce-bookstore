@@ -10,8 +10,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageBooks from "./pages/admin/ManageBooks";
 import ManageCategories from "./pages/admin/ManageCategories";
 import ManageUsers from "./pages/admin/ManageUsers";
-import Create from "./pages/Create";
-import Update from "./pages/Update";
+import Create from "./pages/admin/Create";
+import Update from "./pages/admin/Update";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
@@ -21,17 +21,21 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Guest + User only (admin blocked) */}
+          <Route element={<ProtectedRoute allowRoles={[null, 2]} />}>
+            <Route path="/" element={<Home />} />
+          </Route>
 
-          {/* Public routes */}
-          <Route path="/" element={<Home />} />
-
-          {/* Guest routes */}
+          {/* Guest-only */}
           <Route element={<PublicRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
           </Route>
 
-          {/* Admin routes */}
+          {/* User-only */}
+          <Route path="/user" element={<UserProfile />} />
+
+          {/* Admin-only */}
           <Route element={<ProtectedRoute roleIdRequired={1} />}>
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/manage/books" element={<ManageBooks />} />
@@ -41,12 +45,7 @@ function App() {
             <Route path="/books/update/:id" element={<Update />} />
           </Route>
 
-          {/* Authenticated Users (User, Admin) */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/user" element={<UserProfile />} />
-          </Route>
-
-          {/* Fallback (404 page) */}
+          {/* 404 */}
           <Route path="*" element={<h1>404 Not Found</h1>} />
         </Routes>
       </BrowserRouter>
