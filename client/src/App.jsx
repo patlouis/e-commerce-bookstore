@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import UserProfile from "./pages/UserProfile";
+import Cart from "./pages/Cart";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageBooks from "./pages/admin/ManageBooks";
@@ -33,6 +34,10 @@ function App() {
           </Route>
 
           {/* User-only */}
+          <Route element={<ProtectedRoute roleIdRequired={2} />}>
+            <Route path="/cart" element={<Cart />} />
+          </Route>
+
           <Route path="/user" element={<UserProfile />} />
 
           {/* Admin-only */}

@@ -1,9 +1,11 @@
+// pages/Home.jsx
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import Dropdown from "../components/Dropdown";
+import { useAuth } from "../context/AuthContext";
 
 const API_BASE_URL = "http://localhost:3000";
 
@@ -12,7 +14,6 @@ function Home() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [sortOrder, setSortOrder] = useState("");
-  const [token, setToken] = useState(null);
 
   const [loadingBooks, setLoadingBooks] = useState(false);
   const [errorBooks, setErrorBooks] = useState(null);
@@ -24,11 +25,7 @@ function Home() {
   const queryParams = new URLSearchParams(location.search);
   const search = queryParams.get("search") || "";
 
-  // Get token once on mount
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    setToken(storedToken);
-  }, []);
+  const { user } = useAuth();
 
   // Fetch books
   useEffect(() => {
@@ -36,7 +33,9 @@ function Home() {
       try {
         setLoadingBooks(true);
         setErrorBooks(null);
-        const res = await axios.get(`${API_BASE_URL}/books`, { params: { search } });
+        const res = await axios.get(`${API_BASE_URL}/books`, {
+          params: { search },
+        });
         setBooks(res.data);
       } catch (error) {
         setErrorBooks("Failed to load books. Please try again later.");
@@ -67,33 +66,49 @@ function Home() {
 
   // Filtered & sorted books
   const filteredBooks = books
-    .filter(book => selectedCategory === null || Number(book.category_id) === Number(selectedCategory))
+    .filter(
+      (book) =>
+        selectedCategory === null ||
+        Number(book.category_id) === Number(selectedCategory)
+    )
     .sort((a, b) => {
       if (sortOrder === "asc") return a.price - b.price;
       if (sortOrder === "desc") return b.price - a.price;
+      if (sortOrder === "a-z") return a.title.localeCompare(b.title);
+      if (sortOrder === "z-a") return b.title.localeCompare(a.title);
       return 0;
     });
 
-  // Add to cart function
-  const handleAddToCart = (book) => {
-    if (!token) {
-      alert("Please log in to add books to your cart.");
-      navigate("/login");
-      return;
-    }
-    alert(`Book "${book.title}" added to cart!`);
-  };
+  const handleAddToCart = async (book_id) => {
+  try {
+    const res = await axios.post(
+      `${API_BASE_URL}/cart/add`,
+      { book_id },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    alert(res.data.message);
+  } catch (err) {
+    console.error("Failed to add to cart:", err.response?.data || err.message);
+    alert(err.response?.data?.message || "Failed to add to cart.");
+  }
+};
 
   return (
     <>
       <NavBar />
       <main className="min-h-screen w-full px-4 sm:px-6 lg:px-10 py-16 flex flex-col items-center bg-[#f9f9f9] font-sans">
-
         {/* Dropdowns */}
         <div className="flex flex-col sm:flex-row gap-6 mt-4 w-full max-w-[1300px] justify-start">
           <div className="w-60">
             <Dropdown
-              options={[{ value: null, label: "All Categories" }, ...categories.map(c => ({ value: c.id, label: c.name }))]}
+              options={[
+                { value: null, label: "All Categories" },
+                ...categories.map((c) => ({ value: c.id, label: c.name })),
+              ]}
               selected={selectedCategory}
               setSelected={setSelectedCategory}
               placeholder="Select Category"
@@ -128,7 +143,7 @@ function Home() {
           </p>
         ) : (
           <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-4">
-            {filteredBooks.map(book => (
+            {filteredBooks.map((book) => (
               <article
                 key={book.id}
                 className="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform"
@@ -145,7 +160,7 @@ function Home() {
 
                 {/* Add to Cart Button */}
                 <button
-                  onClick={() => handleAddToCart(book)}
+                  onClick={() => handleAddToCart(book.id)}
                   className="w-full bg-gray-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-gray-700 transition-colors cursor-pointer"
                 >
                   Add to Cart
