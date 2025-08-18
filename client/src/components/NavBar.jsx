@@ -26,10 +26,10 @@ function NavBar() {
 
     if (user?.role_id === 1) {
       // Admin → go to admin search page
-      navigate(`/admin?query=${encodeURIComponent(searchTerm.trim())}`);
+      navigate(`/admin?search=${encodeURIComponent(searchTerm.trim())}`);
     } else {
       // Guest/User → normal search
-      navigate(`/?query=${encodeURIComponent(searchTerm.trim())}`);
+      navigate(`/?search=${encodeURIComponent(searchTerm.trim())}`);
     }
 
     setSearchTerm("");
