@@ -45,8 +45,6 @@ function App() {
             <Route path="/orders/:id" element={<OrderDetail />} />  
           </Route>
 
-          <Route path="/user" element={<UserProfile />} />
-
           {/* Admin-only */}
           <Route element={<ProtectedRoute roleIdRequired={1} />}>
             <Route path="/admin" element={<AdminDashboard />} />
@@ -55,6 +53,11 @@ function App() {
             <Route path="/manage/users" element={<ManageUsers />} />
             <Route path="/books/create" element={<Create />} />
             <Route path="/books/update/:id" element={<Update />} />
+          </Route>
+
+          {/* Authenticated-only */}
+          <Route element={<ProtectedRoute allowRoles={[1, 2]} />}>
+            <Route path="/user" element={<UserProfile />} />
           </Route>
 
           {/* 404 */}
