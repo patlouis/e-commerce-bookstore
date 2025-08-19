@@ -108,13 +108,24 @@ export default function Cart() {
             {/* Cart Summary */}
             <div className="lg:w-1/3 p-6 bg-white rounded-xl shadow flex flex-col gap-4 h-fit">
               <h2 className="text-xl font-bold border-b pb-2">Order Summary</h2>
-              <p className="text-gray-600 flex justify-between">
+
+              {/* List each cart item */}
+              <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
+                {cartItems.map((item) => (
+                  <div key={item.cart_item_id} className="flex justify-between text-gray-700 text-sm">
+                    <span>{item.title}</span>
+                    <span>₱{parseFloat(item.price).toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-gray-600 flex justify-between mt-2">
                 Items: <span>{cartItems.length}</span>
               </p>
               <p className="font-semibold flex justify-between text-lg">
                 Total: <span>₱{total.toFixed(2)}</span>
               </p>
-              <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
+              <button className="mt-4 w-full bg-gray-500 text-white py-2 rounded-md hover:bg-gray-600 transition-colors cursor-pointer">
                 Proceed to Checkout
               </button>
             </div>
