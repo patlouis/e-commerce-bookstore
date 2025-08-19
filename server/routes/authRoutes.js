@@ -102,7 +102,7 @@ router.get('/profile', verifyToken, async (req, res) => {
        FROM users u
        LEFT JOIN roles r ON u.role_id = r.id
        WHERE u.id = ?`,
-      [req.userId]
+      [req.user.id]
     );
 
     if (rows.length === 0) {

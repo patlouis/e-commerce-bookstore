@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import NavBar from "../components/NavBar";
@@ -11,6 +12,7 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -51,36 +53,35 @@ export default function Cart() {
   };
 
   const handleUpdateQuantity = async (cart_item_id, newQuantity) => {
-  const item = cartItems.find(i => i.cart_item_id === cart_item_id);
-  if (!item) return;
+    const item = cartItems.find((i) => i.cart_item_id === cart_item_id);
+    if (!item) return;
 
-  if (item.quantity === 1 && newQuantity < 1) {
-    // Ask to remove
-    const confirmDelete = window.confirm("Do you want to remove this item?");
-    if (confirmDelete) {
-      handleRemoveItem(cart_item_id);
+    if (item.quantity === 1 && newQuantity < 1) {
+      const confirmDelete = window.confirm("Do you want to remove this item?");
+      if (confirmDelete) {
+        handleRemoveItem(cart_item_id);
+      }
+      return;
     }
-    return;
-  }
 
-  if (newQuantity < 1) return; // safety check
+    if (newQuantity < 1) return;
 
-  try {
-    await axios.put(
-      `${API_BASE_URL}/cart/${cart_item_id}`,
-      { quantity: newQuantity },
-      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-    );
-    setCartItems(prev =>
-      prev.map(i =>
-        i.cart_item_id === cart_item_id ? { ...i, quantity: newQuantity } : i
-      )
-    );
-  } catch (err) {
-    console.error(err);
-    alert("Failed to update quantity.");
-  }
-};
+    try {
+      await axios.put(
+        `${API_BASE_URL}/cart/${cart_item_id}`,
+        { quantity: newQuantity },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+      setCartItems((prev) =>
+        prev.map((i) =>
+          i.cart_item_id === cart_item_id ? { ...i, quantity: newQuantity } : i
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update quantity.");
+    }
+  };
 
   if (!user) return <p className="text-center mt-8">Please log in to view your cart.</p>;
   if (loading) return <p className="text-center mt-8">Loading cart...</p>;
@@ -89,8 +90,8 @@ export default function Cart() {
   return (
     <>
       <NavBar />
-      <main className="pt-20 px-4 sm:px-8 max-w-[1400px] mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-center sm:text-left">Your Cart</h1>
+      <main className="pt-20 px-4 sm:px-8 max-w-[1400px] mx-auto w-full bg-[#f9f9f9]">
+        <h1 className="text-3xl font-bold mb-6 text-center sm:text-left">Shopping Cart</h1>
 
         {cartItems.length === 0 ? (
           <p className="text-center text-gray-600 mt-8">Your cart is empty.</p>
@@ -142,7 +143,7 @@ export default function Cart() {
 
                       <button
                         onClick={() => handleRemoveItem(item.cart_item_id)}
-                        className="ml-0 sm:ml-2 bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition-colors text-xs flex-shrink-0"
+                        className="ml-0 sm:ml-2 bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition-colors text-xs flex-shrink-0 cursor-pointer"
                       >
                         Remove
                       </button>
@@ -162,7 +163,9 @@ export default function Cart() {
                     key={item.cart_item_id}
                     className="flex justify-between text-gray-700 text-sm"
                   >
-                    <span className="truncate">{item.title} x {item.quantity}</span>
+                    <span className="truncate">
+                      {item.title} x {item.quantity}
+                    </span>
                     <span>₱{(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
@@ -174,7 +177,10 @@ export default function Cart() {
               <p className="font-semibold flex justify-between text-lg">
                 Total: <span>₱{total.toFixed(2)}</span>
               </p>
-              <button className="mt-4 w-full bg-gray-500 text-white py-2 rounded-md hover:bg-gray-600 transition-colors">
+              <button
+                onClick={() => navigate("/checkout")}
+                className="mt-4 w-full bg-gray-500 text-white py-2 rounded-md hover:bg-gray-600 transition-colors cursor-pointer"
+              >
                 Proceed to Checkout
               </button>
             </div>

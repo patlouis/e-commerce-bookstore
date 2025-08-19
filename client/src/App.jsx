@@ -6,6 +6,8 @@ import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import UserProfile from "./pages/UserProfile";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout"
+import OrderDetail from "./pages/OrderDetail";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageBooks from "./pages/admin/ManageBooks";
@@ -36,6 +38,8 @@ function App() {
           {/* User-only */}
           <Route element={<ProtectedRoute roleIdRequired={2} />}>
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/orders/:id" element={<OrderDetail />} />  
           </Route>
 
           <Route path="/user" element={<UserProfile />} />
