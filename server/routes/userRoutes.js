@@ -87,6 +87,48 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
+// Change password (logged-in user)
+router.put('/profile/password', verifyToken, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Current and new password are required.' });
+  }
+
+  // Optional: enforce strong password
+  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+  if (!strongPasswordRegex.test(newPassword)) {
+    return res.status(400).json({ message: 'New password must be strong (8+ chars, uppercase, lowercase, number, special).' });
+  }
+
+  try {
+    const db = await connectToDatabase();
+    const [rows] = await db.query('SELECT password FROM users WHERE id = ?', [req.user.id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const user = rows[0];
+
+    // Check current password
+    const match = await bcrypt.compare(currentPassword, user.password);
+    if (!match) {
+      return res.status(401).json({ message: 'Current password is incorrect.' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await db.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, req.user.id]);
+
+    res.json({ message: 'Password updated successfully.' });
+  } catch (err) {
+    console.error('[Change Password Error]', err);
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
+
 // Get single user by id (protected)
 router.get('/:id', verifyToken, authorizeRoles(roles.ADMIN),async (req, res) => {
   const userId = req.params.id;

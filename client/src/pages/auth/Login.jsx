@@ -92,7 +92,7 @@ function Login() {
 
           <button
             type="submit"
-            className="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition duration-200 font-semibold cursor-pointer"
+            className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600 transition duration-200 font-semibold cursor-pointer"
           >
             Log In
           </button>
@@ -100,7 +100,7 @@ function Login() {
 
         <p className="text-sm text-gray-600 text-center mt-6">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-orange-600 hover:underline">
+          <Link to="/register" className="text-gray-500 hover:underline">
             Register
           </Link>
         </p>

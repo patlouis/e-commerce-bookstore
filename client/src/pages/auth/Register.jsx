@@ -135,7 +135,7 @@ function Register() {
 
           <button
             type="submit"
-            className="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition duration-200 font-semibold cursor-pointer"
+            className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-500 transition duration-200 font-semibold cursor-pointer"
           >
             Register
           </button>
@@ -143,7 +143,7 @@ function Register() {
 
         <p className="text-sm text-gray-600 text-center mt-6">
           Already have an account?{' '}
-          <Link to="/login" className="text-orange-600 hover:underline">
+          <Link to="/login" className="text-gray-500 hover:underline">
             Log in
           </Link>
         </p>
