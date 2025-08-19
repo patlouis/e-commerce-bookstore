@@ -32,8 +32,25 @@ router.post('/add', verifyToken, authorizeRoles(2), async (req, res) => {
       cart_id = cartRows[0].id;
     }
 
-    // Add book to cart_items
-    await db.query('INSERT INTO cart_items (cart_id, book_id) VALUES (?, ?)', [cart_id, book_id]);
+    // Check if the book is already in the cart
+    const [existingItems] = await db.query(
+      'SELECT * FROM cart_items WHERE cart_id = ? AND book_id = ?',
+      [cart_id, book_id]
+    );
+
+    if (existingItems.length > 0) {
+      // Increment quantity
+      await db.query(
+        'UPDATE cart_items SET quantity = quantity + 1 WHERE cart_id = ? AND book_id = ?',
+        [cart_id, book_id]
+      );
+    } else {
+      // Insert new cart item with default quantity 1
+      await db.query(
+        'INSERT INTO cart_items (cart_id, book_id, quantity) VALUES (?, ?, 1)',
+        [cart_id, book_id]
+      );
+    }
 
     res.json({ message: 'Book added to cart successfully.' });
   } catch (err) {
@@ -61,7 +78,7 @@ router.get('/', verifyToken, authorizeRoles(2), async (req, res) => {
     const cart_id = cartRows[0].id;
 
     const [items] = await db.query(
-      `SELECT ci.id AS cart_item_id, b.id AS book_id, b.title, b.author, b.cover, b.price
+      `SELECT ci.id AS cart_item_id, b.id AS book_id, b.title, b.author, b.cover, b.price, ci.quantity
        FROM cart_items ci
        JOIN books b ON ci.book_id = b.id
        WHERE ci.cart_id = ?`,
@@ -104,6 +121,43 @@ router.delete('/:cart_item_id', verifyToken, authorizeRoles(2), async (req, res)
   } catch (err) {
     console.error('[Remove Cart Item Error]', err);
     res.status(500).json({ message: 'Failed to remove item.' });
+  }
+});
+
+/**
+ * Update quantity of a cart item
+ * PUT /cart/:cart_item_id
+ * Body: { quantity }
+ */
+router.put('/:cart_item_id', verifyToken, authorizeRoles(2), async (req, res) => {
+  const user_id = req.user.id;
+  const cart_item_id = req.params.cart_item_id;
+  const { quantity } = req.body;
+
+  if (!quantity || quantity < 1) {
+    return res.status(400).json({ message: 'Invalid quantity' });
+  }
+
+  try {
+    const db = await connectToDatabase();
+
+    // Ensure the cart item belongs to the user's cart
+    const [cartRows] = await db.query('SELECT * FROM carts WHERE user_id = ?', [user_id]);
+    if (cartRows.length === 0) return res.status(404).json({ message: 'Cart not found.' });
+
+    const cart_id = cartRows[0].id;
+
+    const [result] = await db.query(
+      'UPDATE cart_items SET quantity = ? WHERE id = ? AND cart_id = ?',
+      [quantity, cart_item_id, cart_id]
+    );
+
+    if (result.affectedRows === 0) return res.status(404).json({ message: 'Cart item not found.' });
+
+    res.json({ message: 'Quantity updated successfully.' });
+  } catch (err) {
+    console.error('[Update Cart Item Error]', err);
+    res.status(500).json({ message: 'Failed to update quantity.' });
   }
 });
 
