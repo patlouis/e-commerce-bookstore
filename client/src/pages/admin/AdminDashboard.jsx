@@ -137,9 +137,20 @@ function AdminDashboard() {
       </div>
 
         {/* Books Grid */}
-        {loadingBooks ? (
-          <div className="flex items-center justify-center py-10">
-            <div className="h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          {loadingBooks ? (
+          <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-4">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <div
+                key={index}
+                className="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm animate-pulse"
+              >
+                <div className="w-full h-64 sm:h-72 md:h-80 bg-gray-300 rounded-md mb-4"></div>
+                <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-gray-300 rounded w-1/2 mb-2"></div>
+                <div className="h-4 bg-gray-300 rounded w-1/3 mt-1"></div>
+                <div className="h-8 bg-gray-300 rounded w-full mt-3"></div>
+              </div>
+            ))}
           </div>
         ) : errorBooks ? (
           <p className="text-red-600">{errorBooks}</p>
