@@ -5,6 +5,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
+import dayjs from "dayjs";
 
 const API_BASE_URL = "http://localhost:3000";
 
@@ -13,6 +14,7 @@ export default function OrderDetail() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -24,7 +26,8 @@ export default function OrderDetail() {
         const res = await axios.get(`${API_BASE_URL}/orders/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-        setOrder(res.data);
+        setOrder(res.data.order);
+        setItems(res.data.items);
       } catch (err) {
         console.error(err);
         setError("Failed to load order.");
@@ -40,7 +43,7 @@ export default function OrderDetail() {
   if (error) return <p className="text-center mt-12 text-red-600">{error}</p>;
   if (!order) return <p className="text-center mt-12">Order not found.</p>;
 
-  const total = order.items.reduce(
+  const total = items.reduce(
     (sum, item) => sum + parseFloat(item.price) * item.quantity,
     0
   );
@@ -57,12 +60,10 @@ export default function OrderDetail() {
           <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
             <div className="mb-6">
               <p className="text-gray-700">
-                <span className="font-semibold">Status:</span>{" "}
-                <span className="text-blue-600">{order.status}</span>
-              </p>
-              <p className="text-gray-700">
                 <span className="font-semibold">Date:</span>{" "}
-                {new Date(order.created_at).toLocaleString()}
+                {dayjs(order.created_at).isValid()
+                  ? dayjs(order.created_at).format("MMMM D, YYYY h:mm A")
+                  : "Unknown"}
               </p>
             </div>
 
@@ -70,20 +71,24 @@ export default function OrderDetail() {
               Items
             </h2>
 
-            {order.items.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center border-b py-2"
-              >
-                <div className="text-sm sm:text-base text-gray-700">
-                  {item.title}{" "}
-                  <span className="text-gray-500">x {item.quantity}</span>
+            {items.length > 0 ? (
+              items.map((item) => (
+                <div
+                  key={item.book_id}
+                  className="flex justify-between items-center border-b py-2"
+                >
+                  <div className="text-sm sm:text-base text-gray-700">
+                    {item.title}{" "}
+                    <span className="text-gray-500">x {item.quantity}</span>
+                  </div>
+                  <div className="font-medium text-gray-800">
+                    ₱{(item.price * item.quantity).toFixed(2)}
+                  </div>
                 </div>
-                <div className="font-medium text-gray-800">
-                  ₱{(item.price * item.quantity).toFixed(2)}
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500">No items found for this order.</p>
+            )}
 
             <div className="flex justify-between font-semibold text-lg sm:text-xl mt-4">
               <span>Total</span>
