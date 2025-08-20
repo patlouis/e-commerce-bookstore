@@ -1,4 +1,3 @@
-// pages/OrderDetail.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -10,7 +9,7 @@ import dayjs from "dayjs";
 const API_BASE_URL = "http://localhost:3000";
 
 export default function OrderDetail() {
-  const { id } = useParams(); // order id from URL
+  const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
@@ -51,62 +50,59 @@ export default function OrderDetail() {
   return (
     <>
       <NavBar />
-      <div className="min-h-screen bg-[#f9f9f9]">
-        <main className="pt-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
-            Order #{order.id}
-          </h1>
+      <main className="min-h-screen bg-gray-50 px-4 sm:px-8 pt-24">
+        <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-6 sm:p-10 border border-gray-200">
+          {/* Header */}
+          <div className="text-center border-b pb-4 mb-6">
+            <h1 className="text-2xl font-bold">Order Receipt</h1>
+            <p className="text-sm text-gray-500">Order #{order.id}</p>
+            <p className="text-sm text-gray-500">
+              {dayjs(order.created_at).format("MMMM D, YYYY h:mm A")}
+            </p>
+          </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-            <div className="mb-6">
-              <p className="text-gray-700">
-                <span className="font-semibold">Date:</span>{" "}
-                {dayjs(order.created_at).isValid()
-                  ? dayjs(order.created_at).format("MMMM D, YYYY h:mm A")
-                  : "Unknown"}
-              </p>
-            </div>
-
-            <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-3">
-              Items
-            </h2>
-
+          {/* Items */}
+          <h2 className="font-semibold text-lg mb-3 text-gray-700">Items</h2>
+          <div className="divide-y border rounded-lg">
             {items.length > 0 ? (
               items.map((item) => (
                 <div
                   key={item.book_id}
-                  className="flex justify-between items-center border-b py-2"
+                  className="flex justify-between items-center px-4 py-3 text-sm sm:text-base"
                 >
-                  <div className="text-sm sm:text-base text-gray-700">
-                    {item.title}{" "}
-                    <span className="text-gray-500">x {item.quantity}</span>
+                  <div className="flex-1">
+                    <p className="font-medium">{item.title}</p>
+                    <p className="text-gray-500 text-xs">
+                      Qty: {item.quantity} × ₱{item.price}
+                    </p>
                   </div>
-                  <div className="font-medium text-gray-800">
+                  <div className="font-semibold">
                     ₱{(item.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-gray-500">No items found for this order.</p>
+              <p className="text-gray-500 p-4">No items found for this order.</p>
             )}
-
-            <div className="flex justify-between font-semibold text-lg sm:text-xl mt-4">
-              <span>Total</span>
-              <span className="text-green-600">₱{total.toFixed(2)}</span>
-            </div>
           </div>
 
-          {/* Back to orders list */}
+          {/* Total */}
+          <div className="flex justify-between items-center mt-6 text-lg font-bold">
+            <span>Total</span>
+            <span className="text-green-600">₱{total.toFixed(2)}</span>
+          </div>
+
+          {/* Actions */}
           <div className="mt-8 flex justify-center sm:justify-end">
             <button
               onClick={() => navigate("/orders")}
-              className="w-full sm:w-auto bg-gray-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-gray-700 transition cursor-pointer"
+              className="w-full sm:w-auto bg-gray-700 text-white font-medium px-6 py-3 rounded-xl hover:bg-gray-800 transition cursor-pointer"
             >
               Back to My Orders
             </button>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
       <Footer />
     </>
   );

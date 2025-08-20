@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Book, Layers, Users } from "lucide-react";
+import { Book, Layers, Users, ShoppingCart } from "lucide-react";
 import { useEffect } from "react";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
@@ -9,6 +9,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     { path: "/manage/books", label: "Manage Books", icon: <Book size={18} /> },
     { path: "/manage/categories", label: "Manage Categories", icon: <Layers size={18} /> },
     { path: "/manage/users", label: "Manage Users", icon: <Users size={18} /> },
+    { path: "/manage/orders", label: "Manage Orders", icon: <ShoppingCart size={18} /> },
   ];
 
   // Close on ESC key for practicality

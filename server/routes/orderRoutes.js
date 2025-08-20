@@ -92,6 +92,69 @@ router.get('/my', verifyToken, authorizeRoles(2), async (req, res) => {
 });
 
 /**
+ * Admin: Get all orders
+ * GET /orders
+ */
+router.get('/', verifyToken, authorizeRoles(1), async (req, res) => {
+  try {
+    const db = await connectToDatabase();
+
+    const [orders] = await db.query(
+      `SELECT o.id, o.total, o.created_at, u.username, u.email
+       FROM orders o
+       JOIN users u ON o.user_id = u.id
+       ORDER BY o.created_at DESC`
+    );
+
+    res.json({ orders });
+  } catch (err) {
+    console.error('[All Orders Error]', err);
+    res.status(500).json({ message: 'Failed to fetch orders.' });
+  }
+});
+
+/**
+ * Admin: Get order details by ID
+ * GET /orders/:id (admin)
+ */
+router.get('/admin/:id', verifyToken, authorizeRoles(1), async (req, res) => {
+  const order_id = req.params.id;
+
+  try {
+    const db = await connectToDatabase();
+
+    // Get order + user info
+    const [orders] = await db.query(
+      `SELECT o.id, o.total, o.created_at, u.username, u.email
+       FROM orders o
+       JOIN users u ON o.user_id = u.id
+       WHERE o.id = ?`,
+      [order_id]
+    );
+
+    if (orders.length === 0) {
+      return res.status(404).json({ message: "Order not found." });
+    }
+
+    const order = orders[0];
+
+    // Get items for the order
+    const [items] = await db.query(
+      `SELECT oi.id, oi.quantity, oi.price, b.title
+       FROM order_items oi
+       JOIN books b ON oi.book_id = b.id
+       WHERE oi.order_id = ?`,
+      [order_id]
+    );
+
+    res.json({ order: { ...order, items } });
+  } catch (err) {
+    console.error("[Admin Order Detail Error]", err);
+    res.status(500).json({ message: "Failed to fetch order detail." });
+  }
+});
+
+/**
  * Get order details (for a specific order of the logged-in user)
  * GET /orders/:id
  */
@@ -127,28 +190,6 @@ router.get('/:id', verifyToken, authorizeRoles(2), async (req, res) => {
   } catch (err) {
     console.error('[Order Details Error]', err);
     res.status(500).json({ message: 'Failed to fetch order details.' });
-  }
-});
-
-/**
- * Admin: Get all orders
- * GET /orders
- */
-router.get('/', verifyToken, authorizeRoles(1), async (req, res) => {
-  try {
-    const db = await connectToDatabase();
-
-    const [orders] = await db.query(
-      `SELECT o.id, o.total, o.created_at, u.username, u.email
-       FROM orders o
-       JOIN users u ON o.user_id = u.id
-       ORDER BY o.created_at DESC`
-    );
-
-    res.json({ orders });
-  } catch (err) {
-    console.error('[All Orders Error]', err);
-    res.status(500).json({ message: 'Failed to fetch orders.' });
   }
 });
 

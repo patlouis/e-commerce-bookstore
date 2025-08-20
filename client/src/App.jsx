@@ -15,6 +15,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageBooks from "./pages/admin/ManageBooks";
 import ManageCategories from "./pages/admin/ManageCategories";
 import ManageUsers from "./pages/admin/ManageUsers";
+import ManageOrders from "./pages/admin/ManageOrders";
+import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
 import Create from "./pages/admin/Create";
 import Update from "./pages/admin/Update";
 
@@ -52,6 +54,8 @@ function App() {
             <Route path="/manage/categories" element={<ManageCategories />} />
             <Route path="/manage/users" element={<ManageUsers />} />
             <Route path="/books/create" element={<Create />} />
+            <Route path="/manage/orders" element={<ManageOrders />} />
+            <Route path="/admin/orders/:id" element={<AdminOrderDetail />} />
             <Route path="/books/update/:id" element={<Update />} />
           </Route>
 
