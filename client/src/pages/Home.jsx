@@ -1,6 +1,5 @@
-// pages/Home.jsx
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
@@ -12,7 +11,6 @@ const API_BASE_URL = "http://localhost:3000";
 function Home() {
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [sortOrder, setSortOrder] = useState("");
 
   const [loadingBooks, setLoadingBooks] = useState(false);
@@ -22,19 +20,25 @@ function Home() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { id: categoryIdParam } = useParams(); // 👈 read category from URL
+
   const queryParams = new URLSearchParams(location.search);
   const search = queryParams.get("search") || "";
 
   const { user } = useAuth();
 
-  // Fetch books
+  // Fetch books (search + category)
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         setLoadingBooks(true);
         setErrorBooks(null);
+
         const res = await axios.get(`${API_BASE_URL}/books`, {
-          params: { search },
+          params: { 
+            search,
+            category_id: categoryIdParam || undefined, // 👈 use category from URL
+          },
         });
         setBooks(res.data);
       } catch (error) {
@@ -45,9 +49,9 @@ function Home() {
       }
     };
     fetchBooks();
-  }, [search]);
+  }, [search, categoryIdParam]);
 
-  // Fetch categories
+  // Fetch categories (for dropdown)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -64,38 +68,32 @@ function Home() {
     fetchCategories();
   }, []);
 
-  // Filtered & sorted books
-  const filteredBooks = books
-    .filter(
-      (book) =>
-        selectedCategory === null ||
-        Number(book.category_id) === Number(selectedCategory)
-    )
-    .sort((a, b) => {
-      if (sortOrder === "asc") return a.price - b.price;
-      if (sortOrder === "desc") return b.price - a.price;
-      if (sortOrder === "a-z") return a.title.localeCompare(b.title);
-      if (sortOrder === "z-a") return b.title.localeCompare(a.title);
-      return 0;
-    });
+  // Sorting only (backend does filtering)
+  const sortedBooks = books.sort((a, b) => {
+    if (sortOrder === "asc") return a.price - b.price;
+    if (sortOrder === "desc") return b.price - a.price;
+    if (sortOrder === "a-z") return a.title.localeCompare(b.title);
+    if (sortOrder === "z-a") return b.title.localeCompare(a.title);
+    return 0;
+  });
 
   const handleAddToCart = async (book_id) => {
-  try {
-    const res = await axios.post(
-      `${API_BASE_URL}/cart/add`,
-      { book_id },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-    alert(res.data.message);
-  } catch (err) {
-    console.error("Failed to add to cart:", err.response?.data || err.message);
-    alert(err.response?.data?.message || "Failed to add to cart.");
-  }
-};
+    try {
+      const res = await axios.post(
+        `${API_BASE_URL}/cart/add`,
+        { book_id },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      alert(res.data.message);
+    } catch (err) {
+      console.error("Failed to add to cart:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Failed to add to cart.");
+    }
+  };
 
   return (
     <>
@@ -109,8 +107,8 @@ function Home() {
                 { value: null, label: "All Categories" },
                 ...categories.map((c) => ({ value: c.id, label: c.name })),
               ]}
-              selected={selectedCategory}
-              setSelected={setSelectedCategory}
+              selected={categoryIdParam || null}
+              setSelected={(val) => navigate(val ? `/category/${val}` : "/")} // 👈 this updates URL
               placeholder="Select Category"
             />
           </div>
@@ -132,33 +130,19 @@ function Home() {
 
         {/* Books Grid */}
         {loadingBooks ? (
-          <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-4">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <div
-                key={index}
-                className="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm animate-pulse"
-              >
-                <div className="w-full h-64 sm:h-72 md:h-80 bg-gray-300 rounded-md mb-4"></div>
-                <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-gray-300 rounded w-1/2 mb-2"></div>
-                <div className="h-4 bg-gray-300 rounded w-1/3 mt-1"></div>
-                <div className="h-8 bg-gray-300 rounded w-full mt-3"></div>
-              </div>
-            ))}
-          </div>
+          <p>Loading books...</p>
         ) : errorBooks ? (
           <p className="text-red-600">{errorBooks}</p>
-        ) : filteredBooks.length === 0 ? (
+        ) : sortedBooks.length === 0 ? (
           <p className="flex items-center justify-center py-10 text-gray-600">
             No books found{search ? ` for "${search}"` : ""}.
           </p>
         ) : (
           <div className="w-full max-w-[1300px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-4">
-            {filteredBooks.map((book) => (
+            {sortedBooks.map((book) => (
               <article
                 key={book.id}
                 className="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform"
-                tabIndex={0}
               >
                 <img
                   src={book.cover}
@@ -168,11 +152,9 @@ function Home() {
                 <h2 className="text-base font-semibold mt-4">{book.title}</h2>
                 <p className="text-xs mt-1 text-gray-600">{book.author}</p>
                 <p className="text-base font-medium mt-1.5">₱{book.price}</p>
-
-                {/* Add to Cart Button */}
                 <button
                   onClick={() => handleAddToCart(book.id)}
-                  className="w-full bg-gray-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-gray-700 transition-colors cursor-pointer"
+                  className="w-full bg-gray-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-gray-700 transition-colors"
                 >
                   Add to Cart
                 </button>

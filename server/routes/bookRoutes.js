@@ -10,6 +10,7 @@ const router = express.Router();
 */
 router.get('/', async (req, res) => {
   const search = req.query.search?.trim();
+  const category_id = req.query.category_id;
   try {
     const db = await connectToDatabase();
     let sql = `
@@ -18,12 +19,18 @@ router.get('/', async (req, res) => {
         c.name AS category_name
       FROM books b
       LEFT JOIN categories c ON b.category_id = c.id
+      WHERE 1=1
     `;
     const params = [];
 
     if (search) {
-      sql += ` WHERE b.title LIKE ? OR b.author LIKE ? OR c.name LIKE ?`;
+      sql += ` AND (b.title LIKE ? OR b.author LIKE ? OR c.name LIKE ?)`;
       params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
+
+    if (category_id) {
+      sql += ` AND b.category_id = ?`;
+      params.push(category_id);
     }
 
     const [books] = await db.query(sql, params);

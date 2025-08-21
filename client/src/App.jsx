@@ -31,6 +31,7 @@ function App() {
           {/* Guest + User only (admin blocked) */}
           <Route element={<ProtectedRoute allowRoles={[null, 2]} />}>
             <Route path="/" element={<Home />} />
+            <Route path="/category/:id" element={<Home />} />
           </Route>
 
           {/* Guest-only */}
@@ -55,7 +56,7 @@ function App() {
             <Route path="/manage/users" element={<ManageUsers />} />
             <Route path="/books/create" element={<Create />} />
             <Route path="/manage/orders" element={<ManageOrders />} />
-            <Route path="/admin/orders/:id" element={<AdminOrderDetail />} />
+            <Route path="/manage/orders/:id" element={<AdminOrderDetail />} />
             <Route path="/books/update/:id" element={<Update />} />
           </Route>
 

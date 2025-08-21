@@ -1,18 +1,35 @@
 import { Link, useLocation } from "react-router-dom";
 import { Book, Layers, Users, ShoppingCart } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+
+const API_BASE_URL = "http://localhost:3000"; // adjust if needed
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const location = useLocation();
+  const { user } = useAuth();
+  const [categories, setCategories] = useState([]);
 
-  const navItems = [
+  // Fetch categories for guests/users
+  useEffect(() => {
+    if (user?.role_id !== 1) {
+      axios
+        .get(`${API_BASE_URL}/categories`)
+        .then((res) => setCategories(res.data))
+        .catch((err) => console.error("Failed to fetch categories:", err));
+    }
+  }, [user]);
+
+  // Admin nav items
+  const adminNavItems = [
     { path: "/manage/books", label: "Manage Books", icon: <Book size={18} /> },
     { path: "/manage/categories", label: "Manage Categories", icon: <Layers size={18} /> },
     { path: "/manage/users", label: "Manage Users", icon: <Users size={18} /> },
     { path: "/manage/orders", label: "Manage Orders", icon: <ShoppingCart size={18} /> },
   ];
 
-  // Close on ESC key for practicality
+  // Close on ESC key
   useEffect(() => {
     const handleEsc = (e) => e.key === "Escape" && toggleSidebar();
     window.addEventListener("keydown", handleEsc);
@@ -30,7 +47,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       >
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-bold tracking-wide">Admin Panel</h2>
+          <h2 className="text-lg font-bold tracking-wide">
+            {user?.role_id === 1 ? "Admin Panel" : "Browse Categories"}
+          </h2>
           <button
             onClick={toggleSidebar}
             className="text-xl font-bold hover:text-orange-300"
@@ -42,22 +61,40 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
         {/* Navigation */}
         <nav className="flex flex-col space-y-2">
-          {navItems.map(({ path, label, icon }) => (
-            <Link
-              key={path}
-              to={path}
-              onClick={toggleSidebar}
-              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors
-                ${
-                  location.pathname === path
-                    ? "bg-[#2c2f2c] text-white"
-                    : "hover:bg-[#363A36] hover:text-white"
-                }`}
-            >
-              {icon}
-              <span>{label}</span>
-            </Link>
-          ))}
+          {user?.role_id === 1 ? (
+            adminNavItems.map(({ path, label, icon }) => (
+              <Link
+                key={path}
+                to={path}
+                onClick={toggleSidebar}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors
+                  ${
+                    location.pathname === path
+                      ? "bg-[#2c2f2c] text-white"
+                      : "hover:bg-[#363A36] hover:text-white"
+                  }`}
+              >
+                {icon}
+                <span>{label}</span>
+              </Link>
+            ))
+          ) : (
+            categories.map((cat) => (
+              <Link
+                key={cat.id}
+                to={`/category/${cat.id}`}
+                onClick={toggleSidebar}
+                className={`px-4 py-2 rounded-lg transition-colors
+                  ${
+                    location.pathname === `/category/${cat.id}`
+                      ? "bg-[#2c2f2c] text-white"
+                      : "hover:bg-[#363A36] hover:text-white"
+                  }`}
+              >
+                {cat.name}
+              </Link>
+            ))
+          )}
         </nav>
       </div>
 

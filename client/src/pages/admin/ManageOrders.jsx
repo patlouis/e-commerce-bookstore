@@ -158,7 +158,7 @@ export default function ManageOrders() {
                       </td>
                       <td className="px-4 py-3">
                         <button
-                          onClick={() => navigate(`/admin/orders/${o.id}`)}
+                          onClick={() => navigate(`/manage/orders/${o.id}`)}
                           className="bg-blue-100 text-blue-800 px-3 py-1 rounded-md hover:bg-blue-200 cursor-pointer"
                         >
                           View
