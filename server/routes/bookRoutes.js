@@ -44,9 +44,21 @@ router.get('/', async (req, res) => {
     Create a new book
 */
 router.post('/', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
-  const { title, author, desc, cover, price, category_id } = req.body;
+  let { title, author, desc, cover, price, category_id } = req.body;
+
+  // Trim strings
+  title = title?.trim();
+  author = author?.trim();
+  desc = desc?.trim();
+  cover = cover?.trim();
+
   if (!title || !author || !desc || !cover || price == null || !category_id) {
     return res.status(400).json({ error: 'All fields are required, including category_id' });
+  }
+
+  price = parseFloat(price);
+  if (isNaN(price) || price < 0) {
+    return res.status(400).json({ error: 'Price must be a valid non-negative number' });
   }
 
   try {
@@ -78,9 +90,21 @@ router.delete('/:id', verifyToken, authorizeRoles(roles.ADMIN), async (req, res)
     Update a book by its id 
 */ 
 router.put('/:id', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
-  const { title, author, desc, cover, price, category_id } = req.body;
+  let { title, author, desc, cover, price, category_id } = req.body;
+
+  // Trim strings
+  title = title?.trim();
+  author = author?.trim();
+  desc = desc?.trim();
+  cover = cover?.trim();
+
   if (!title || !author || !desc || !cover || price == null || !category_id) {
     return res.status(400).json({ error: 'All fields are required, including category_id' });
+  }
+
+  price = parseFloat(price);
+  if (isNaN(price) || price < 0) {
+    return res.status(400).json({ error: 'Price must be a valid non-negative number' });
   }
 
   try {

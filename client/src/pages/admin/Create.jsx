@@ -33,21 +33,47 @@ const Create = () => {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!book.title || !book.author || !book.desc || !book.price || !book.cover || !book.category_id) {
-      setError("Please fill in all fields including category.");
-      return;
-    }
-    try {
-      await axios.post("http://localhost:3000/books", book, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      navigate(-1);
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong while creating the book.");
-    }
+  e.preventDefault();
+
+  const cleanedBook = {
+    title: book.title.trim(),
+    author: book.author.trim(),
+    desc: book.desc.trim(),
+    price: book.price.toString().trim(),
+    cover: book.cover.trim(),
+    category_id: book.category_id,
   };
+
+  if (
+    !cleanedBook.title ||
+    !cleanedBook.author ||
+    !cleanedBook.desc ||
+    !cleanedBook.price ||
+    !cleanedBook.cover ||
+    !cleanedBook.category_id
+  ) {
+    setError("Please fill in all fields properly (no empty or whitespace-only).");
+    return;
+  }
+
+  const priceNum = parseFloat(cleanedBook.price);
+  if (isNaN(priceNum) || priceNum < 0) {
+    setError("Price must be a valid number and cannot be negative.");
+    return;
+  }
+
+  const finalBook = { ...cleanedBook, price: priceNum };
+
+  try {
+    await axios.post("http://localhost:3000/books", finalBook, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    navigate(-1);
+  } catch (err) {
+    console.error(err);
+    setError("Something went wrong while creating the book.");
+  }
+};
 
   const inputClass =
     "w-full max-w-[400px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition";
@@ -71,29 +97,34 @@ const Create = () => {
           type="text"
           placeholder="Title"
           className={inputClass}
+          value={book.title}
           onChange={(e) => setBook({ ...book, title: e.target.value })}
         />
         <input
           type="text"
           placeholder="Author"
           className={inputClass}
+          value={book.author}
           onChange={(e) => setBook({ ...book, author: e.target.value })}
         />
         <textarea
           placeholder="Description"
           className={`${inputClass} resize-none h-24`}
+          value={book.desc}
           onChange={(e) => setBook({ ...book, desc: e.target.value })}
         />
         <input
           type="number"
           placeholder="Price"
           className={inputClass}
+          value={book.price}
           onChange={(e) => setBook({ ...book, price: e.target.value })}
         />
         <input
           type="text"
           placeholder="Cover Image URL"
           className={inputClass}
+          value={book.cover}
           onChange={(e) => setBook({ ...book, cover: e.target.value })}
         />
 
