@@ -100,7 +100,7 @@ const Create = () => {
         {/* Category Dropdown */}
         {loadingCategories ? (
           <div className="flex items-center gap-2 text-gray-600">
-            <div className="h-5 w-5 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="h-5 w-5 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
             <span>Loading categories...</span>
           </div>
         ) : (
@@ -122,7 +122,7 @@ const Create = () => {
 
         <button
           onClick={handleSubmit}
-          className="bg-orange-600 text-white px-6 py-2 mt-3 rounded-lg text-sm hover:bg-orange-700 active:bg-orange-800 transition cursor-pointer"
+          className="bg-blue-600 text-white px-6 py-2 mt-3 rounded-lg text-sm hover:bg-blue-700 active:bg-blue-800 transition cursor-pointer"
         >
           Create Book
         </button>
