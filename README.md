@@ -28,10 +28,12 @@ A full-stack e-commerce bookstore web application inspired by Fully Booked. Buil
 - Secure access via admin login
 
 ### Preview
-<img width="941" height="436" alt="image" src="https://github.com/user-attachments/assets/a248d46f-df1c-421e-9849-be1562b3c0ff" />
-<img width="941" height="437" alt="image" src="https://github.com/user-attachments/assets/eeca50a4-4494-4909-bc63-d3cd80465c2e" />
-<img width="941" height="434" alt="image" src="https://github.com/user-attachments/assets/6b945835-cf3a-4d2d-9e48-fa4a4e7aa28c" />
-<img width="941" height="435" alt="image" src="https://github.com/user-attachments/assets/dff8a3e8-b76b-4977-8e13-62c138f4275a" />
+<img width="947" height="437" alt="image" src="https://github.com/user-attachments/assets/a2dfb203-d406-4994-98fb-a5adb2b25bfd" />
+<img width="947" height="434" alt="image" src="https://github.com/user-attachments/assets/4809e531-c271-45b6-bae0-ecf31888a913" />
+<img width="947" height="434" alt="image" src="https://github.com/user-attachments/assets/dbfadaf0-b636-480a-87b0-d5a234a6fb9b" />
+<img width="947" height="436" alt="image" src="https://github.com/user-attachments/assets/df4bef0e-4d7f-4ee5-a56a-5c6fc903fda4" />
+
+
 
 
 
