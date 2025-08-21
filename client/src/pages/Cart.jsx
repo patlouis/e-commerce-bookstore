@@ -90,7 +90,7 @@ export default function Cart() {
   return (
     <>
       <NavBar />
-      <main className="pt-20 px-4 sm:px-8 max-w-[1400px] mx-auto w-full bg-[#f9f9f9]">
+      <main className="py-20 px-4 sm:px-8 max-w-[1400px] mx-auto w-full bg-[#f9f9f9]">
         <h1 className="text-3xl font-bold mb-6 text-center sm:text-left">Shopping Cart</h1>
 
         {cartItems.length === 0 ? (

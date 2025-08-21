@@ -69,7 +69,7 @@ export default function AdminOrderDetail() {
   return (
     <>
       <NavBar />
-      <main className="min-h-screen px-4 sm:px-8 lg:px-20 pt-24 bg-gray-50 font-sans">
+      <main className="min-h-screen px-4 sm:px-8 lg:px-20 py-20 bg-gray-50 font-sans">
         <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-6 sm:p-10 border border-gray-200">
           {/* Header */}
           <div className="text-center border-b pb-4 mb-6">

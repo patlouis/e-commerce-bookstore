@@ -102,7 +102,7 @@ export default function ManageOrders() {
   return (
     <>
       <NavBar />
-      <main className="min-h-screen px-4 sm:px-6 lg:px-10 pt-20 bg-[#f9f9f9] font-sans">
+      <main className="min-h-screen px-4 sm:px-6 lg:px-10 py-20 bg-[#f9f9f9] font-sans">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
             <h1 className="text-2xl font-bold">Manage Orders</h1>

@@ -50,7 +50,7 @@ export default function OrderDetail() {
   return (
     <>
       <NavBar />
-      <main className="min-h-screen bg-gray-50 px-4 sm:px-8 pt-24">
+      <main className="min-h-screen bg-gray-50 px-4 sm:px-8 py-20">
         <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-6 sm:p-10 border border-gray-200">
           {/* Header */}
           <div className="text-center border-b pb-4 mb-6">
