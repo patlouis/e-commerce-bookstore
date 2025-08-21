@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import NavBar from '../components/NavBar';
+import { useAuth } from '../context/AuthContext'; // ✅ import
 
 function UserProfile() {
   const [user, setUser] = useState(null);
@@ -13,6 +14,8 @@ function UserProfile() {
   const [passwordError, setPasswordError] = useState('');
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+
+  const { logout } = useAuth();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -57,6 +60,13 @@ function UserProfile() {
     }
   };
 
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
+
+    logout();
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       <NavBar />
@@ -85,6 +95,14 @@ function UserProfile() {
                 className="mt-4 w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600 cursor-pointer"
               >
                 Change Password
+              </button>
+
+              {/* ✅ Secondary Logout button */}
+              <button
+                onClick={handleLogout}
+                className="mt-2 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 cursor-pointer"
+              >
+                Logout
               </button>
             </div>
           ) : !profileError && (
@@ -151,7 +169,7 @@ function UserProfile() {
                   </button>
                 </form>
 
-                {/* Password change error or success below the form */}
+                {/* Password change error or success */}
                 {passwordError && <p className="mt-2 text-red-600">{passwordError}</p>}
                 {successMsg && <p className="mt-2 text-green-600">{successMsg}</p>}
               </div>
