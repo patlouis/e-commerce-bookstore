@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
-// Get all users (protected, maybe admin only)
+// Get all users (protected, admin only)
 router.get('/', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -29,8 +29,8 @@ router.get('/', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
 });
 
 // Create new user (protected)
-router.post('/', verifyToken, authorizeRoles(roles.ADMIN),async (req, res) => {
-  const { username, email, password } = req.body;
+router.post('/', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
+  const { username, email, password, role_id } = req.body;
 
   if (!username || !email || !password) {
     return res.status(400).json({ message: 'Username, email, and password are required.' });
@@ -39,22 +39,18 @@ router.post('/', verifyToken, authorizeRoles(roles.ADMIN),async (req, res) => {
   try {
     const db = await connectToDatabase();
 
-    // Check if username already exists
+    // Check duplicates
     const [existingUsers] = await db.query('SELECT id FROM users WHERE username = ?', [username]);
-    if (existingUsers.length > 0) {
-      return res.status(409).json({ message: 'Username already exists.' });
-    }
+    if (existingUsers.length > 0) return res.status(409).json({ message: 'Username already exists.' });
 
     const [existingEmails] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
-    if (existingEmails.length > 0) {
-      return res.status(409).json({ message: 'Email already exists.' });
-    }
+    if (existingEmails.length > 0) return res.status(409).json({ message: 'Email already exists.' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.query(
-      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-      [username, email, hashedPassword]
+      'INSERT INTO users (username, email, password, role_id) VALUES (?, ?, ?, ?)',
+      [username, email, hashedPassword, role_id]
     );
 
     res.status(201).json({ message: 'User created successfully.' });
@@ -151,27 +147,35 @@ router.get('/:id', verifyToken, authorizeRoles(roles.ADMIN),async (req, res) => 
 // Update user by id (protected)
 router.put('/:id', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
   const userId = req.params.id;
-  const { username, email, password } = req.body;
+  const { username, email, password, role_id } = req.body;
 
   try {
     const db = await connectToDatabase();
-
-    // Optional: Validate input here (e.g. check email format)
 
     let hashedPassword;
     if (password) {
       hashedPassword = await bcrypt.hash(password, 10);
     }
 
-    const updateQuery = `
+    let updateQuery = `
       UPDATE users 
-      SET username = ?, email = ? ${password ? ', password = ?' : ''} 
+      SET username = ?, email = ?
+      ${password ? ', password = ?' : ''}
+      ${role_id ? ', role_id = ?' : ''}
       WHERE id = ?
     `;
 
-    const params = password
-      ? [username, email, hashedPassword, userId]
-      : [username, email, userId];
+    const params = [];
+    params.push(username, email);
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      params.push(hashedPassword);
+    }
+    if (role_id) {
+      params.push(role_id);
+    }
+    params.push(userId);
 
     const [result] = await db.query(updateQuery, params);
 

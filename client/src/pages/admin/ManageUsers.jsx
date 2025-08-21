@@ -27,9 +27,7 @@ export default function ManageUsers() {
   }, []);
 
   useEffect(() => {
-    if (token) {
-      fetchUsers();
-    }
+    if (token) fetchUsers();
   }, [token]);
 
   const fetchUsers = async () => {
@@ -37,9 +35,7 @@ export default function ManageUsers() {
       setLoading(true);
       setError(null);
       const res = await axios.get(`${API_BASE_URL}/users`, {
-        headers: { 
-          Authorization: `Bearer ${token}` 
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
@@ -65,9 +61,7 @@ export default function ManageUsers() {
 
   const handleSort = (key) => {
     let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
+    if (sortConfig.key === key && sortConfig.direction === "asc") direction = "desc";
     setSortConfig({ key, direction });
   };
 
@@ -90,36 +84,35 @@ export default function ManageUsers() {
       u.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const renderSortIcon = (key) => {
-    if (sortConfig.key !== key) return null;
-    return sortConfig.direction === "asc" ? (
+  const renderSortIcon = (key) =>
+    sortConfig.key !== key ? null : sortConfig.direction === "asc" ? (
       <FaSortUp className="inline ml-1" />
     ) : (
       <FaSortDown className="inline ml-1" />
     );
-  };
 
-  // ===== Create Modal Component =====
+  // ===== Create Modal =====
   function UserCreateModal({ isOpen, onClose }) {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [role, setRole] = useState(""); // empty by default
     const [error, setError] = useState("");
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      if (!username.trim() || !email.trim() || !password) {
+      if (!username.trim() || !email.trim() || !password || !role) {
         setError("All fields are required.");
         return;
       }
       try {
         await axios.post(
           `${API_BASE_URL}/users`,
-          { username, email, password },
+          { username, email, password, role_id: Number(role) },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         onClose();
-        fetchUsers(token);
+        fetchUsers();
       } catch (err) {
         const backendMsg = err.response?.data?.message;
         setError(backendMsg || "Failed to create user.");
@@ -154,8 +147,19 @@ export default function ManageUsers() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:border-blue-500"
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-3 focus:outline-none focus:border-blue-500"
             />
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+            >
+              <option value="" disabled>
+                Select Role
+              </option>
+              <option value={2}>User</option>
+              <option value={1}>Admin</option>
+            </select>
             <div className="flex justify-end gap-2">
               <button
                 type="button"
@@ -177,33 +181,42 @@ export default function ManageUsers() {
     );
   }
 
-  // ===== Update Modal Component =====
+  // ===== Update Modal =====
   function UserUpdateModal({ isOpen, user, onClose }) {
-    const [username, setUsername] = useState(user?.username || "");
-    const [email, setEmail] = useState(user?.email || "");
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [role, setRole] = useState("");
     const [error, setError] = useState("");
 
     useEffect(() => {
       if (user) {
-        setUsername(user.username);
-        setEmail(user.email);
+        setUsername(user.username || "");
+        setEmail(user.email || "");
+        setRole(user.role_id ? user.role_id : ""); // show current role
+        setError("");
       }
     }, [user]);
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      if (!username.trim() || !email.trim()) {
-        setError("Username and email are required.");
+      if (!username.trim() || !email.trim() || !role) {
+        setError("Username, email, and role are required.");
         return;
       }
+
       try {
         await axios.put(
           `${API_BASE_URL}/users/${user.id}`,
-          { username, email },
+          {
+            username,
+            email,
+            role_id: Number(role),
+          },
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
         onClose();
-        fetchUsers(token);
+        fetchUsers();
       } catch (err) {
         const backendMsg = err.response?.data?.message;
         setError(backendMsg || "Failed to update user.");
@@ -233,6 +246,17 @@ export default function ManageUsers() {
               placeholder="Email"
               className="w-full border border-gray-300 rounded px-3 py-2 mb-3 focus:outline-none focus:border-blue-500"
             />
+            <select
+              value={role}
+              onChange={(e) => setRole(Number(e.target.value))}
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-3"
+            >
+              <option value="" disabled>
+                Select Role
+              </option>
+              <option value={2}>User</option>
+              <option value={1}>Admin</option>
+            </select>
             <div className="flex justify-end gap-2">
               <button
                 type="button"
@@ -289,40 +313,22 @@ export default function ManageUsers() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-100 text-gray-700">
                   <tr>
-                    <th
-                      className="px-4 py-3 cursor-pointer"
-                      onClick={() => handleSort("id")}
-                    >
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("id")}>
                       ID {renderSortIcon("id")}
                     </th>
-                    <th
-                      className="px-4 py-3 cursor-pointer"
-                      onClick={() => handleSort("username")}
-                    >
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("username")}>
                       Username {renderSortIcon("username")}
                     </th>
-                    <th
-                      className="px-4 py-3 cursor-pointer"
-                      onClick={() => handleSort("email")}
-                    >
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("email")}>
                       Email {renderSortIcon("email")}
                     </th>
-                    <th
-                      className="px-4 py-3 cursor-pointer"
-                      onClick={() => handleSort("role_name")}
-                    >
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("role_name")}>
                       Role {renderSortIcon("role_name")}
                     </th>
-                    <th
-                      className="px-4 py-3 cursor-pointer"
-                      onClick={() => handleSort("created_at")}
-                    >
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("created_at")}>
                       Created At {renderSortIcon("created_at")}
                     </th>
-                    <th
-                      className="px-4 py-3 cursor-pointer"
-                      onClick={() => handleSort("updated_at")}
-                    >
+                    <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("updated_at")}>
                       Updated At {renderSortIcon("updated_at")}
                     </th>
                     <th className="px-4 py-3 text-right">Actions</th>
@@ -335,12 +341,8 @@ export default function ManageUsers() {
                       <td className="px-4 py-3">{u.username}</td>
                       <td className="px-4 py-3">{u.email}</td>
                       <td className="px-4 py-3">{u.role_name}</td>
-                      <td className="px-4 py-3">
-                        {dayjs(u.created_at).format("YYYY-MM-DD")}
-                      </td>
-                      <td className="px-4 py-3">
-                        {dayjs(u.updated_at).format("YYYY-MM-DD")}
-                      </td>
+                      <td className="px-4 py-3">{dayjs(u.created_at).format("YYYY-MM-DD")}</td>
+                      <td className="px-4 py-3">{dayjs(u.updated_at).format("YYYY-MM-DD")}</td>
                       <td className="px-4 py-3 flex justify-end gap-2">
                         <button
                           onClick={() => {
@@ -362,7 +364,7 @@ export default function ManageUsers() {
                   ))}
                   {filteredUsers.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="text-center py-4 text-gray-500">
+                      <td colSpan={7} className="text-center py-4 text-gray-500">
                         No users found.
                       </td>
                     </tr>
@@ -374,11 +376,7 @@ export default function ManageUsers() {
         </div>
       </main>
 
-      {/* Modals */}
-      <UserCreateModal
-        isOpen={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
+      <UserCreateModal isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)} />
       <UserUpdateModal
         isOpen={updateModalOpen}
         user={updateUser}
