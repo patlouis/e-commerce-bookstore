@@ -90,11 +90,27 @@ export default function Cart() {
   return (
     <>
       <NavBar />
-      <main className="py-20 px-4 sm:px-8 max-w-[1400px] mx-auto w-full bg-[#f9f9f9]">
+      <main className="flex-1 py-20 px-4 sm:px-8 max-w-[1400px] mx-auto w-full bg-[#f9f9f9] min-h-[calc(100vh-200px)]">
         <h1 className="text-3xl font-bold mb-6 text-center sm:text-left">Shopping Cart</h1>
 
         {cartItems.length === 0 ? (
-          <p className="text-center text-gray-600 mt-8">Your cart is empty.</p>
+          <div className="flex flex-col items-center justify-center h-[60vh] text-center gap-6">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png"
+              alt="Empty cart"
+              className="w-40 h-40 opacity-80"
+            />
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-800">Your cart is empty</h2>
+              <p className="text-gray-500 mt-2">Looks like you haven’t added anything yet.</p>
+            </div>
+            <button
+              onClick={() => navigate("/")}
+              className="bg-gray-800 text-white px-6 py-2 rounded-lg shadow hover:bg-gray-900 transition-colors cursor-pointer"
+            >
+              Continue Shopping
+            </button>
+          </div>
         ) : (
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Cart Items */}
