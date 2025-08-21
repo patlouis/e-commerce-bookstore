@@ -20,14 +20,14 @@ function Home() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { id: categoryIdParam } = useParams(); // 👈 read category from URL
+  const { id: categoryIdParam } = useParams();
 
   const queryParams = new URLSearchParams(location.search);
   const search = queryParams.get("search") || "";
 
   const { user } = useAuth();
 
-  // Fetch books (search + category)
+  // Fetch books
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -35,9 +35,9 @@ function Home() {
         setErrorBooks(null);
 
         const res = await axios.get(`${API_BASE_URL}/books`, {
-          params: { 
+          params: {
             search,
-            category_id: categoryIdParam || undefined, // 👈 use category from URL
+            category_id: categoryIdParam || undefined,
           },
         });
         setBooks(res.data);
@@ -51,7 +51,7 @@ function Home() {
     fetchBooks();
   }, [search, categoryIdParam]);
 
-  // Fetch categories (for dropdown)
+  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -68,7 +68,12 @@ function Home() {
     fetchCategories();
   }, []);
 
-  // Sorting only (backend does filtering)
+  // Find selected category (so dropdown shows label not just id)
+  const selectedCategory = categoryIdParam
+    ? categories.find((c) => String(c.id) === String(categoryIdParam))?.id
+    : null;
+
+  // Sorting
   const sortedBooks = books.sort((a, b) => {
     if (sortOrder === "asc") return a.price - b.price;
     if (sortOrder === "desc") return b.price - a.price;
@@ -107,8 +112,8 @@ function Home() {
                 { value: null, label: "All Categories" },
                 ...categories.map((c) => ({ value: c.id, label: c.name })),
               ]}
-              selected={categoryIdParam || null}
-              setSelected={(val) => navigate(val ? `/category/${val}` : "/")} // 👈 this updates URL
+              selected={selectedCategory}
+              setSelected={(val) => navigate(val ? `/category/${val}` : "/")}
               placeholder="Select Category"
             />
           </div>
