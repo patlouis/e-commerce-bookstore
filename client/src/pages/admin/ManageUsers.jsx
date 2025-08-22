@@ -13,7 +13,6 @@ export default function ManageUsers() {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [token, setToken] = useState(null);
-
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   // Modal states
@@ -96,7 +95,7 @@ export default function ManageUsers() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState(""); // empty by default
+    const [role, setRole] = useState("");
     const [error, setError] = useState("");
 
     const handleSubmit = async (e) => {
@@ -157,8 +156,8 @@ export default function ManageUsers() {
               <option value="" disabled>
                 Select Role
               </option>
-              <option value={2}>User</option>
-              <option value={1}>Admin</option>
+              <option value="2">User</option>
+              <option value="1">Admin</option>
             </select>
             <div className="flex justify-end gap-2">
               <button
@@ -185,14 +184,14 @@ export default function ManageUsers() {
   function UserUpdateModal({ isOpen, user, onClose }) {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState(""); // <- will store role_id as string
     const [error, setError] = useState("");
 
     useEffect(() => {
       if (user) {
         setUsername(user.username || "");
         setEmail(user.email || "");
-        setRole(user.role_id ? user.role_id : ""); // show current role
+        setRole(user.role_id?.toString() || ""); // <- now properly sets current role
         setError("");
       }
     }, [user]);
@@ -248,14 +247,14 @@ export default function ManageUsers() {
             />
             <select
               value={role}
-              onChange={(e) => setRole(Number(e.target.value))}
+              onChange={(e) => setRole(e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2 mb-3"
             >
               <option value="" disabled>
                 Select Role
               </option>
-              <option value={2}>User</option>
-              <option value={1}>Admin</option>
+              <option value="2">User</option>
+              <option value="1">Admin</option>
             </select>
             <div className="flex justify-end gap-2">
               <button

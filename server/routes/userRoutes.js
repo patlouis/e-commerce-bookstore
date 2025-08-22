@@ -17,6 +17,7 @@ router.get('/', verifyToken, authorizeRoles(roles.ADMIN), async (req, res) => {
         u.email, 
         u.created_at, 
         u.updated_at,
+        u.role_id,
         r.role AS role_name
       FROM users u
       INNER JOIN roles r ON u.role_id = r.id
