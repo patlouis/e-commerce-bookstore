@@ -10,6 +10,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout"
 import OrderDetail from "./pages/OrderDetail";
 import Orders from "./pages/Orders";
+import BookDetail from "./pages/BookDetail";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageBooks from "./pages/admin/ManageBooks";
@@ -32,6 +33,7 @@ function App() {
           <Route element={<ProtectedRoute allowRoles={[null, 2]} />}>
             <Route path="/" element={<Home />} />
             <Route path="/category/:id" element={<Home />} />
+            <Route path="/book/:id" element={<BookDetail />} />
           </Route>
 
           {/* Guest-only */}

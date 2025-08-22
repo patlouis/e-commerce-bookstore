@@ -147,7 +147,8 @@ function Home() {
             {sortedBooks.map((book) => (
               <article
                 key={book.id}
-                className="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform"
+                className="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-start shadow-sm hover:-translate-y-1 transition-transform cursor-pointer"
+                onClick={() => navigate(`/book/${book.id}`)}
               >
                 <img
                   src={book.cover}
@@ -158,8 +159,11 @@ function Home() {
                 <p className="text-xs mt-1 text-gray-600">{book.author}</p>
                 <p className="text-base font-medium mt-1.5">₱{book.price}</p>
                 <button
-                  onClick={() => handleAddToCart(book.id)}
-                  className="w-full bg-gray-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(book.id)
+                  }}
+                  className="w-full bg-gray-600 text-white text-sm mt-3 py-2 rounded-md hover:bg-gray-700 transition-colors cursor-pointer"
                 >
                   Add to Cart
                 </button>
